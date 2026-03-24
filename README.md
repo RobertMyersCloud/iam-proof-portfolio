@@ -29,7 +29,7 @@ End-to-end Joiner-Mover-Leaver identity lifecycle demonstrating:
 | [03 — Privileged Access](./03-privileged-access/README.md) | 🟢 Complete (v1 — policy + evidence) | PAM / Zero Trust |
 | [04 — Conditional Access](./04-conditional-access/README.md) | 🟢 Complete (v1 — policy + evidence) | Zero Trust |
 | [05 — SoD Matrix](./05-sod-matrix/README.md) | 🟢 Complete (v1 — policy + evidence) | GRC / Compliance |
-| [06 — Automation Scripts](./06-automation-scripts/README.md) | ⏳ Planned | Engineering |
+| [06 — Automation Scripts](./06-automation-scripts/README.md) | 🟢 Complete (v1 — policy + evidence)  | Engineering |
 
 ## Standards
 
