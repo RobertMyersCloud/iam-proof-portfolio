@@ -25,7 +25,7 @@ End-to-end Joiner-Mover-Leaver identity lifecycle demonstrating:
 | Pack | Status | Domain |
 |---|---|---|
 | [01 — JML Lifecycle](./01-jml-lifecycle/README.md) | 🟢 Complete (v1 — policy + evidence) | Identity Lifecycle |
-| [02 — Access Reviews](./02-access-reviews/README.md) | 🚧 In Build | Access Governance |
+| [02 — Access Reviews](./02-access-reviews/README.md) | 🟢 Complete (v1 — policy + evidence) | Access Governance |
 | [03 — Privileged Access](./03-privileged-access/README.md) | ⏳ Planned | PAM / Zero Trust |
 | [04 — Conditional Access](./04-conditional-access/README.md) | ⏳ Planned | Zero Trust |
 | [05 — SoD Matrix](./05-sod-matrix/README.md) | ⏳ Planned | GRC / Compliance |
