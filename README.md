@@ -96,7 +96,7 @@ Active U.S. Government Secret clearance · DOJ High-Risk Public Trust.
 - CMMC Level 2 readiness consulting engagements
 - SDVOSB defense identity governance contracts
 
-**Contact:** robert@stellamarisgovernance.com · [LinkedIn](https://linkedin.com/in/robertmyers) · [Stella Maris Governance](https://stellamarisgovernance.com)
+**Contact:** robert@stellamarisgovernance.com · [LinkedIn](https://linkedin.com/in/robertjmyers5) · [Stella Maris Governance](https://stellamarisgovernance.com)
 
 ---
 
