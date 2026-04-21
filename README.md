@@ -6,13 +6,13 @@
 [![NIST 800-53](https://img.shields.io/badge/NIST-800--53-blue)](https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final)
 [![CMMC Level 2](https://img.shields.io/badge/CMMC-Level%202-green)](https://dodcio.defense.gov/CMMC/)
 [![Zero Trust](https://img.shields.io/badge/Zero-Trust-red)](https://www.cisa.gov/zero-trust-maturity-model)
-[![Status: Complete](https://img.shields.io/badge/Status-6%20Packs%20Complete-brightgreen)](https://github.com/RobertMyersCloud/iam-proof-portfolio)
+[![Status: Complete](https://img.shields.io/badge/Status-7%20Packs%20Complete-brightgreen)](https://github.com/RobertMyersCloud/iam-proof-portfolio)
 
 ---
 
 ## What This Portfolio Is
 
-Six complete governance packs. Each pack contains the deliverables that real IAM programs require and real CMMC Level 2 assessors expect.
+Seven complete governance packs. Each pack contains the deliverables that real IAM programs require and real CMMC Level 2 assessors expect.
 
 Every pack includes:
 - **Policy document** — the governing framework
@@ -60,6 +60,7 @@ These packs double as kickstarter templates for CMMC readiness engagements. For 
 | [04](./04-conditional-access/) | **Conditional Access** | Zero Trust | IA-2, AC-3, AC-17 | 6 screenshots |
 | [05](./05-sod-matrix/) | **SoD Matrix** | GRC / Compliance | AC-5, AC-6, AU-2, AU-9, CA-7 | 15-conflict matrix |
 | [06](./06-automation-scripts/) | **PowerShell Automation** | IGA Engineering | Cross-cutting automation | 5-script control system |
+| [07](./07-sparks-ai-operations/) | **Sparks AI Operations** NEW | Application-layer IAM | AC-2, AC-3, AC-4, AC-6, AU-2, AU-9, IA-2, SI-4 | Live production platform |
 
 ---
 
