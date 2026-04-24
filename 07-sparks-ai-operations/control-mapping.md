@@ -52,3 +52,14 @@
 ---
 
 *[Back to Pack 07 README](./README.md)*
+
+---
+
+## Related framework alignment
+
+The NIST 800-53 controls mapped above correspond directly to the following additional frameworks. This pack's controls satisfy equivalent requirements in each:
+
+- **NIST 800-53 (Rev. 5)** — federal baseline; Access Control (AC) and Identification and Authentication (IA) families covered by the mappings above
+- **NIST SP 800-171 (Rev. 3)** — DFARS 252.204-7012 / CMMC Level 2 baseline; 3.1.x (Access Control) and 3.5.x (Identification and Authentication) families applicable
+
+> **Note on scope:** This appendix identifies cross-framework applicability. Specific control-ID crosswalks to 800-171 and SOC 2 CC6/CC7 are on the roadmap for a future Evidence Production pack that consolidates cross-framework traceability.
