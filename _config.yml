@@ -1,0 +1,41 @@
+# GitHub Pages configuration
+theme: jekyll-theme-cayman
+
+title: IAM Proof Portfolio
+description: >
+  Production-grade identity governance evidence packs for Microsoft Entra ID.
+  JML, Access Reviews, PIM, Conditional Access, SoD, PowerShell automation.
+  NIST 800-53 + NIST 800-171 + CMMC Level 2 + SOC 2 aligned.
+
+# Author
+author:
+  name: Robert J. Myers
+  email: robert@rjmyers.cloud
+
+# SEO
+logo: # optional
+social:
+  name: Robert J. Myers
+  links:
+    - https://github.com/RobertMyersCloud
+    - https://stellamarisgovernance.com
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  syntax_highlighter: rouge
+
+# Exclusions — don't publish these
+exclude:
+  - LICENSE
+  - "*.ps1"
+  - "06-automation-scripts/scripts/"
+  - .gitignore
+
+# Better link handling
+relative_links:
+  enabled: true
+  collections: true
+include:
+  - README.md
