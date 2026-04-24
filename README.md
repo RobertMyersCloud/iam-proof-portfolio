@@ -1,6 +1,6 @@
 # IAM Proof Portfolio
 
-**Production-grade identity governance evidence packs for Microsoft Entra ID.** Built for CMMC Level 2 and NIST 800-53 regulated environments by a Navy-trained IAM architect.
+**Production-grade identity governance evidence packs for Microsoft Entra ID.** Built for CMMC Level 2 and NIST 800-53 regulated environments by a 20-year Navy veteran applying federal governance discipline to commercial IAM.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-gold.svg)](./LICENSE)
 [![NIST 800-53](https://img.shields.io/badge/NIST-800--53-blue)](https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final)
