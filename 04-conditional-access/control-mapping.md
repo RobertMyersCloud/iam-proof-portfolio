@@ -101,3 +101,14 @@ Control effectiveness is validated using the following testing approach:
 - Monitor for failed MFA attempts and blocked access patterns
 - Tune policies based on observed results and changing threat signals
 - Quarterly review of policy effectiveness metrics aligned to governance cadence
+
+---
+
+## Related framework alignment
+
+The NIST 800-53 controls mapped above correspond directly to the following additional frameworks. This pack's controls satisfy equivalent requirements in each:
+
+- **NIST SP 800-171 (Rev. 3)** — DFARS 252.204-7012 / CMMC Level 2 baseline; 3.1.x (Access Control) and 3.5.x (Identification and Authentication) families applicable
+- **SOC 2 (TSC 2017)** — Common Criteria CC6.1 through CC6.8 (Logical & Physical Access Controls) and CC7.2 (System Monitoring) applicable
+
+> **Note on scope:** This appendix identifies cross-framework applicability. Specific control-ID crosswalks to 800-171 and SOC 2 CC6/CC7 are on the roadmap for a future Evidence Production pack that consolidates cross-framework traceability.
