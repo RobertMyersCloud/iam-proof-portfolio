@@ -81,3 +81,13 @@ This confirms that the SoD program is functioning as a genuine governance contro
 ---
 
 *Mapping reference: NIST SP 800-53 Rev 5 · CMMC Level 2 (32 CFR Part 170) · NIST SP 800-171 Rev 2*
+
+---
+
+## Related framework alignment
+
+The NIST 800-53 controls mapped above correspond directly to the following additional frameworks. This pack's controls satisfy equivalent requirements in each:
+
+- **NIST SP 800-171 (Rev. 3)** — DFARS 252.204-7012 / CMMC Level 2 baseline; 3.1.x (Access Control) and 3.5.x (Identification and Authentication) families applicable
+
+> **Note on scope:** This appendix identifies cross-framework applicability. Specific control-ID crosswalks to 800-171 and SOC 2 CC6/CC7 are on the roadmap for a future Evidence Production pack that consolidates cross-framework traceability.
