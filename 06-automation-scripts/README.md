@@ -159,3 +159,13 @@ This pack demonstrates the ability to:
 ---
 
 *Pack version: v1.0 — March 2026 · Environment: Microsoft Entra ID — rjmyers.cloud tenant*
+
+---
+
+## Related framework alignment
+
+The NIST 800-53 controls mapped above correspond directly to the following additional frameworks. This pack's controls satisfy equivalent requirements in each:
+
+- **SOC 2 (TSC 2017)** — Common Criteria CC6.1 through CC6.8 (Logical & Physical Access Controls) and CC7.2 (System Monitoring) applicable
+
+> **Note on scope:** This appendix identifies cross-framework applicability. Specific control-ID crosswalks to 800-171 and SOC 2 CC6/CC7 are on the roadmap for a future Evidence Production pack that consolidates cross-framework traceability.
