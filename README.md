@@ -1,6 +1,6 @@
-# IAM Proof Portfolio
+# IAM Proof Portfolio — Microsoft Entra ID Governance
 
-**Production-grade identity governance evidence packs for Microsoft Entra ID.** Built for CMMC Level 2 and NIST 800-53 regulated environments by a 20-year Navy veteran applying federal governance discipline to commercial IAM.
+Hands-on identity governance evidence packs for Microsoft Entra ID aligned to CMMC Level 2 and NIST 800-53 regulated environments.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-gold.svg)](./LICENSE)
 [![NIST 800-53](https://img.shields.io/badge/NIST-800--53-blue)](https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final)
@@ -12,41 +12,50 @@
 
 ## What This Portfolio Is
 
-Seven complete governance packs. Each pack contains the deliverables that real IAM programs require and real CMMC Level 2 assessors expect.
+Seven complete IAM and identity governance packs demonstrating practical governance workflows, operational controls, and audit-ready evidence aligned to regulated environments.
 
 Every pack includes:
-- **Policy document** — the governing framework
-- **Control mapping** — NIST 800-53 + CMMC Level 2 traceability
-- **Implementation evidence** — configured in a live Entra tenant, screenshots preserved
-- **Interview responses** — real questions with operator-level answers
-- **Resume-ready outcome statements** — measurable business impact, not task descriptions
 
-This is not tutorial content. It is not theory. It is a working implementation with evidence.
+Policy documentation and governance standards
+NIST 800-53 and CMMC Level 2 control mappings
+Microsoft Entra ID configuration evidence
+Operational workflow demonstrations
+Interview preparation notes and governance explanations
+Resume-ready impact statements tied to governance outcomes
+
+This portfolio demonstrates practical IAM governance workflows with supporting evidence, control mappings, and operational documentation.
 
 ---
 
 ## For IAM Hiring Managers
 
-These packs answer the question most candidates can't: **"Can this person actually operate identity governance at scale?"**
+These packs answer the question many hiring managers ask:
 
-Open any pack and see real policies, real Entra configurations, real control mappings. The packs demonstrate end-to-end lifecycle thinking — provisioning through deprovisioning, activation through revocation, review through enforcement.
+“Can this person practically operate IAM governance workflows?”
+
+Open any pack to review governance policies, Microsoft Entra ID configurations, lifecycle workflows, access governance processes, control mappings, and audit-ready evidence aligned to regulated environments.
 
 **Strongest packs for IAM Architect interviews:**
-1. [**JML Lifecycle**](./01-jml-lifecycle/) — 1-hour deprovisioning SLA, AC-2/AC-6/IA-2
-2. [**Privileged Access (PIM)**](./03-privileged-access/) — JIT activation, approval gates, AC-6(5)
-3. [**Conditional Access**](./04-conditional-access/) — Zero Trust deployment with Report-only → enforce lifecycle
-4. [**Automation Scripts**](./06-automation-scripts/) — Complete PowerShell IGA control system
 
----
+[**JML Lifecycle**](./01-jml-lifecycle/) — onboarding, transfers, deprovisioning, lifecycle governance
+[**Privileged Access (PIM)**](./03-privileged-access/) — privileged access governance, approval workflows, JIT activation
+[**Conditional Access**](./04-conditional-access/) — Zero Trust policy governance and Conditional Access enforcement
+[**Automation Scripts**](./06-automation-scripts/) — PowerShell and Microsoft Graph governance automation
 
-## For CMMC Consulting Clients
+## For Governance & Compliance Operations
 
-Each pack includes the exact deliverables a CMMC Level 2 assessor expects: policy, configuration evidence, control narrative, NIST 800-53 mapping.
+Each pack includes the types of governance documentation, evidence structures, control mappings, and operational workflows commonly associated with regulated IAM and compliance environments.
 
-These packs double as kickstarter templates for CMMC readiness engagements. For custom implementation or CMMC readiness consulting, contact:
+Topics include:
 
-**Stella Maris Governance LLC** — SDVOSB | CAGE 1AGQ9
-[stellamarisgovernance.com](https://stellamarisgovernance.com)
+* Identity lifecycle governance
+* Access reviews and certification campaigns
+* RBAC and least privilege enforcement
+* Conditional Access governance
+* Privileged Identity Management (PIM)
+* Segregation of Duties (SoD)
+* Audit-ready evidence preparation
+* Governance automation using PowerShell and Microsoft Graph
 
 ---
 
@@ -64,43 +73,60 @@ These packs double as kickstarter templates for CMMC readiness engagements. For 
 
 ---
 
-## Standards
+## Standards & Governance Alignment
 
-Every pack is aligned to:
-- **NIST SP 800-53 Rev 5** — full control mapping per pack
-- **CMMC Level 2** — applicable practice mapping
-- **SOC 2 Type II (CC6)** — access control criteria
-- **Zero Trust** — CISA Zero Trust Maturity Model
-
----
-
-## Stack
-
-Microsoft Entra ID (Azure AD) · Microsoft Entra ID Governance · Microsoft Entra PIM · Conditional Access · PowerShell · Microsoft Graph · NIST SP 800-53 · CMMC Level 2
+* Every pack is aligned to:
+* NIST SP 800-53 Rev 5
+* NIST SP 800-171
+* CMMC Level 2
+* SOC 2 Type II (CC6)
+* CISA Zero Trust Maturity Model
 
 ---
 
-## Author
+## Identity & Governance Stack
 
-**Robert J. Myers** — IAM Architect · Founder, Stella Maris Governance LLC
+## Identity & Access Management
+Microsoft Entra ID (Azure AD) · Microsoft Entra ID Governance · Microsoft Entra PIM · Conditional Access · PowerShell · Active Directory · Microsoft Graph · RBAC · CAC/PKI · SAML · OAuth · OIDC · SCIM
 
-20 years U.S. Navy (2001–2021) — federal identity governance at scale. 3,500+ identities, 2,200+ CAC/PKI credentials, zero security incidents across four years as IT Operations & Access Governance Lead.
+## Governance & Compliance
+NIST 800-53 Rev 5 · NIST 800-171 · CMMC 2.0 · Zero Trust (CISA ZTMM) · DFARS · Audit Readiness & Evidence Governance
 
-Civilian IAM implementation and CMMC consulting since 2025. Holder of 25+ active certifications including CMMC RP, CCZT, SailPoint ISL, Okta Identity Foundations, FinOps Certified Practitioner, Security+, Network+, CCSK v5, SC-900, AZ-900.
+## Technical & Automation
+PowerShell · Microsoft Graph · Azure Fundamentals · Python · Bash · SQL · Terraform Fundamentals
 
-Currently pursuing SC-300 (Microsoft Identity Administrator), AZ-500 (Azure Security Engineer), Okta Certified Professional, Okta Certified Administrator.
+---
 
-Active U.S. Government Secret clearance · DOJ High-Risk Public Trust.
+## Background
+
+**Robert J. Myers** — Identity Governance & Access Management (IAM)
+
+20 years U.S. Navy (2001–2021) supporting identity accountability, personnel security, audit readiness, credential governance, and access governance operations across regulated federal environments.
+
+Operational experience includes:
+
+3,500+ identities governed
+2,200+ CAC/PKI credentials managed
+Zero security incidents across four years in access governance leadership roles
+
+Civilian experience includes aerospace manufacturing, regulated operational governance, DFARS/ITAR environments, procurement accountability, and compliance-driven operational workflows.
+
+Education:
+
+MBA — University of the Incarnate Word
+BS Accounting — Colorado Technical University
+
+Prior U.S. Government Secret Clearance | DOJ High-Risk Public Trust
 
 **Open to:**
-- IAM / IGA Architect roles ($130K–170K target)
-- CMMC Level 2 readiness consulting engagements
-- SDVOSB defense identity governance contracts
+* IAM / IGA operations and governance roles
+* Identity governance and access management opportunities
+* Governance, compliance, and security operations roles
+* CMMC readiness and governance engagements
 
-**Contact:** robert@stellamarisgovernance.com · [LinkedIn](https://linkedin.com/in/robertjmyers5) · [Stella Maris Governance](https://stellamarisgovernance.com)
-
+**Contact:** robert.j.myers5@gmail.com · [LinkedIn](https://linkedin.com/in/robertjmyers5) 
 ---
 
 *This portfolio is actively maintained. Each pack is versioned. Pack updates are documented in individual pack READMEs.*
 
-*Last updated: April 2026*
+*Last updated: May 2026*
