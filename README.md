@@ -157,7 +157,7 @@ Prior U.S. Government Secret Clearance | DOJ High-Risk Public Trust
 # Contact
 
 - Email: robert.j.myers5@gmail.com
-- LinkedIn
+- LinkedIn: www.linkedin.com/in/robertjmyers5
 
 ---
 
