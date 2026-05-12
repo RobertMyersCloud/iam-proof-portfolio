@@ -2,20 +2,30 @@
 
 ## Primary Bullets
 
-- Designed and implemented a Joiner-Mover-Leaver (JML) identity lifecycle model in Microsoft Entra ID supporting 24-hour provisioning and 1-hour deprovisioning SLAs — automating role-based provisioning, access adjustment on role change, and immediate deprovisioning aligned to NIST AC-2 account management controls.
+- Built a Joiner-Mover-Leaver (JML) identity lifecycle workflow in Microsoft Entra ID supporting role-based provisioning, access correction during role changes, and immediate deprovisioning aligned to NIST AC-2 account management principles.
 
-- Reduced orphaned account risk by implementing a leaver workflow with immediate account disablement, session and token revocation, and group membership removal within one hour of offboarding — eliminating post-termination access persistence and residual session risk.
+- Reduced orphaned account exposure by implementing an offboarding workflow including account disablement, group membership removal, and active session revocation to address residual access and token persistence risk.
 
-- Enforced least privilege across identity lifecycle using role-based group assignment with no direct user permissions — preventing privilege accumulation across role changes through clean delta enforcement.
+- Enforced least privilege using role-based security group assignment with no direct user permissions, reducing privilege accumulation across internal role transitions.
 
-- Implemented Conditional Access policy enforcing MFA on all cloud application sign-ins, aligned to NIST IA-2 and Zero Trust access control principles.
+- Applied Conditional Access policies requiring MFA for cloud application access, supporting identity verification and Zero Trust access control concepts aligned to NIST IA-2.
 
-- Produced audit-ready identity lifecycle evidence package (policy, control mapping, and configuration evidence) aligned to NIST 800-53 and CMMC Level 2, supporting SOC 2 Type II requirements.
+- Produced audit-ready lifecycle governance evidence including workflow documentation, control mappings, and Microsoft Entra ID configuration artifacts aligned to NIST 800-53 and CMMC Level 2 practices.
+
+---
 
 ## Supporting Bullets
 
-- Documented identity lifecycle workflows covering joiner provisioning, mover access adjustment, and leaver deprovisioning — providing repeatable, auditable process evidence for compliance reviews.
+- Documented lifecycle governance workflows covering onboarding, role transitions, and offboarding processes to support repeatable and auditable identity operations.
 
-- Configured Microsoft Entra ID security groups for role-based access control — removing direct user permissions and enforcing access assignment via group membership only.
+- Configured role-based access control (RBAC) using Microsoft Entra ID security groups to centralize access governance and simplify access review activities.
 
-- Demonstrated immediate token revocation on user offboarding — closing the authentication persistence gap that exists when accounts are disabled but active sessions remain valid.
+- Demonstrated immediate session revocation during offboarding workflows to reduce residual authenticated access following account disablement.
+
+- Mapped identity lifecycle governance controls to NIST 800-53, NIST 800-171, and CMMC Level 2 access control and authentication requirements.
+
+- Maintained audit-ready evidence structures including configuration screenshots, governance documentation, and lifecycle control mappings.
+
+---
+
+*These bullets are intended for IAM, identity governance, access management, governance, and compliance-focused resume tailoring.*
