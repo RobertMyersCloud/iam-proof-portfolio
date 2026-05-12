@@ -1,72 +1,112 @@
 # JML Lifecycle Pack
 
-**End-to-end identity lifecycle implementation demonstrating provisioning, access governance, and immediate deprovisioning with audit-ready evidence in Microsoft Entra ID.**
+End-to-end Joiner-Mover-Leaver (JML) identity lifecycle demonstration in Microsoft Entra ID with audit-ready evidence aligned to NIST 800-53 and CMMC Level 2.
 
-End-to-end Joiner-Mover-Leaver identity lifecycle implemented in Microsoft Entra ID with audit-ready evidence aligned to NIST 800-53 and CMMC Level 2.
-
-## Scenario
-
-A regulated organization needs to ensure new hires receive role-based access immediately, internal transfers receive corrected access without accumulation, and terminated users lose all access within one hour of offboarding.
-
-## What Was Built
-
-| Phase | Implementation |
-|---|---|
-| **Joiner** | User provisioned in Entra ID, assigned via role-based security group, MFA enforced through Conditional Access |
-| **Mover** | Access recalculated on role change — previous group membership removed, new role assigned, no privilege accumulation |
-| **Leaver** | Account disabled immediately, sessions revoked, access terminated across all resources |
-
-## Controls Enforced
-
-| Control | Description | Implementation |
-|---|---|---|
-| AC-2 | Account Management | Full JML lifecycle — provisioning, modification, disablement |
-| AC-2(1) | Automated Account Management | Group-based provisioning — no direct user permissions |
-| AC-3 | Access Enforcement | Role-based group membership only |
-| AC-6 | Least Privilege | Access scoped to role — excess removed on move and exit |
-| IA-2 | Identification & Authentication | MFA enforced via Conditional Access policy |
-| AU-2 | Audit Events | All lifecycle events logged in Entra ID audit log |
-
-## Outcome
-
-- Eliminated orphaned account risk through enforced 1-hour deprovisioning SLA
-- Prevented privilege accumulation during role changes via clean delta enforcement
-- Enforced least privilege through group-based access — no direct user permissions
-- Established audit-ready lifecycle evidence aligned to CMMC Level 2 AC and IA control families
-
-## Evidence Index
-
-| File | What It Shows | Control |
-|---|---|---|
-| [JML-STEP-01-user-created.png](./evidence/JML-STEP-01-user-created.png) | User `jml.test@rjmyers.cloud` created — Account status: Enabled | AC-2 |
-| [JML-STEP-02-group-assignment.png](./evidence/JML-STEP-02-group-assignment.png) | User assigned to `Finance-ReadOnly` security group | AC-2, AC-3 |
-| [JML-STEP-03-mfa-policy.png](./evidence/JML-STEP-03-mfa-policy.png) | Conditional Access policy "Require MFA - JML Test" active — all cloud apps | IA-2 |
-| [JML-STEP-04-role-change.png](./evidence/JML-STEP-04-role-change.png) | Mover — group memberships updated to reflect role change | AC-2, AC-6 |
-| [JML-STEP-05-account-disabled.png](./evidence/JML-STEP-05-account-disabled.png) | Leaver — Account disabled, authentication blocked regardless of existing group memberships | AC-2 |
-| [JML-STEP-06-session-revoked.png](./evidence/JML-STEP-06-session-revoked.png) | Successfully revoked sign-in sessions for JML Test User | AC-2, IA-2 |
-
-## Pack Contents
-
-| File | Description |
-|---|---|
-| `JML-Policy.md` | Full identity lifecycle policy — scope, workflows, SLAs, enforcement controls |
-| `control-mapping.md` | NIST 800-53 / CMMC Level 2 control mapping |
-| `resume-bullets.md` | Resume-ready bullet points tied to this implementation |
-| `interview-questions.md` | Interview questions this pack answers with documented responses |
-| `evidence/` | Entra ID configuration screenshots — named and indexed above |
-
-## Interview Value
-
-This pack demonstrates the ability to:
-
-- Design and implement a full identity lifecycle (Joiner, Mover, Leaver)
-- Enforce least privilege through RBAC and access correction
-- Apply Conditional Access policies for MFA enforcement
-- Execute immediate deprovisioning and session termination
-- Map identity controls to NIST 800-53 and CMMC Level 2 requirements
-
-This directly answers common IAM interview questions related to lifecycle management, access governance, and Zero Trust enforcement.
+This pack demonstrates practical identity governance workflows focused on provisioning, access governance, least privilege enforcement, and immediate deprovisioning within regulated environments.
 
 ---
 
-*Pack version: v1.0 — March 2026 · Environment: Microsoft Entra ID — rjmyers.cloud tenant*
+# Scenario
+
+A regulated organization requires a controlled identity lifecycle process to ensure:
+
+- New hires receive appropriate role-based access quickly
+- Internal transfers receive corrected access without privilege accumulation
+- Terminated users lose all access immediately upon offboarding
+- All lifecycle actions are auditable and aligned to governance requirements
+
+---
+
+# What Was Built
+
+| Phase | Implementation |
+|---|---|
+| Joiner | User provisioned in Microsoft Entra ID and assigned via role-based security groups with MFA enforced through Conditional Access |
+| Mover | Access recalculated during role change — previous group memberships removed and new role access assigned without privilege accumulation |
+| Leaver | Account disabled immediately, active sessions revoked, and access removed across connected resources |
+
+---
+
+# Controls Enforced
+
+| Control | Description | Implementation |
+|---|---|---|
+| AC-2 | Account Management | Full JML lifecycle — provisioning, modification, disablement, and access removal |
+| AC-2(1) | Automated Account Management | Group-based provisioning and deprovisioning with no direct user permissions |
+| AC-3 | Access Enforcement | Role-based access through security group membership only |
+| AC-6 | Least Privilege | Access scoped to role with excess permissions removed during moves and exits |
+| IA-2 | Identification & Authentication | MFA enforced through Conditional Access policies |
+| AU-2 | Audit Events | Lifecycle events logged within Microsoft Entra ID audit logs |
+
+---
+
+# Outcome
+
+- Reduced orphaned account risk through enforced 1-hour deprovisioning SLA
+- Prevented privilege accumulation during role changes using delta-based access correction
+- Enforced least privilege through role-based group assignment with no direct user permissions
+- Established audit-ready lifecycle evidence aligned to NIST 800-53 and CMMC Level 2 access control requirements
+
+---
+
+# Evidence Index
+
+| File | What It Shows | Control |
+|---|---|---|
+| JML-STEP-01-user-created.png | User account created and enabled in Microsoft Entra ID | AC-2 |
+| JML-STEP-02-group-assignment.png | User assigned to Finance-ReadOnly security group | AC-2, AC-3 |
+| JML-STEP-03-mfa-policy.png | Conditional Access MFA policy enforced across cloud applications | IA-2 |
+| JML-STEP-04-role-change.png | Group memberships updated during role transition | AC-2, AC-6 |
+| JML-STEP-05-account-disabled.png | Account disabled during offboarding process | AC-2 |
+| JML-STEP-06-session-revoked.png | Active sign-in sessions revoked successfully | AC-2, IA-2 |
+
+---
+
+# Pack Contents
+
+| File | Description |
+|---|---|
+| JML-Policy.md | Identity lifecycle governance policy including workflows, SLAs, and enforcement controls |
+| control-mapping.md | NIST 800-53 and CMMC Level 2 control alignment |
+| resume-bullets.md | Resume-ready implementation bullet points |
+| interview-questions.md | IAM interview questions supported by this implementation |
+| evidence/ | Microsoft Entra ID configuration screenshots and evidence artifacts |
+
+---
+
+# Interview Value
+
+This pack demonstrates practical approaches to:
+
+- Identity lifecycle management (Joiner, Mover, Leaver)
+- Least privilege enforcement through RBAC
+- Access correction during internal role changes
+- MFA enforcement using Conditional Access
+- Immediate deprovisioning and session termination
+- Audit-ready governance evidence preparation
+- NIST 800-53 and CMMC Level 2 control alignment
+
+This directly supports IAM, identity governance, access management, and compliance-focused interview discussions.
+
+---
+
+# Governance Alignment
+
+This pack aligns to:
+- NIST SP 800-53 Rev 5
+- NIST SP 800-171
+- CMMC Level 2
+- SOC 2 Type II (CC6)
+- CISA Zero Trust Maturity Model
+
+---
+
+# Environment
+
+- Microsoft Entra ID
+- rjmyers.cloud tenant
+- Pack version: v1.0 — March 2026
+
+---
+
+*This portfolio demonstrates governance concepts, operational workflows, and identity security practices within a controlled lab environment aligned to regulated IAM operations.*
