@@ -2,24 +2,34 @@
 
 ## Primary Bullets
 
-- Implemented a quarterly access certification program in Microsoft Entra ID Identity Governance, scoping reviews to business-sensitive security groups, assigning independent reviewers to enforce separation of duties, and configuring auto-apply to remove denied access upon completion.
+- Built a quarterly access review workflow in Microsoft Entra ID Identity Governance using reviewer-based certification, automated recommendations, and access removal enforcement to support least privilege and ongoing access validation.
 
-- Enforced least privilege through reviewer-driven access certification, leveraging automated inactivity recommendations to identify dormant accounts and requiring documented justification for all denial decisions aligned to NIST AC-6 and AC-6(7).
+- Configured access certification campaigns for business-sensitive security groups with independent reviewer assignment to support separation of duties and governance accountability.
 
-- Produced audit-ready evidence packages including review configuration, decision records with justification, access removal confirmation, and Entra ID audit logs — enabling direct use in CMMC Level 2 and SOC 2 Type II assessments.
+- Applied automated recommendation workflows based on user activity indicators to help identify inactive or unnecessary access requiring reviewer evaluation.
 
-- Established continuous monitoring of access control effectiveness via a defined quarterly review cadence aligned to NIST CA-7, ensuring all access decisions are attributable, traceable, and auditable.
+- Enforced least privilege by removing group-based access when continued business need could not be validated during periodic certification reviews.
 
-- Configured automated access review recommendations based on user activity signals, reducing manual analysis effort while preserving reviewer accountability and control integrity aligned to AC-2(4).
+- Produced audit-ready governance evidence including review configurations, reviewer decisions, enforcement outcomes, and Microsoft Entra ID audit log correlation aligned to NIST 800-53 and CMMC Level 2 concepts.
 
-- Validated full access governance control chain from review initiation through enforcement and audit logging, ensuring controls are not only documented but operationally effective and testable during audit.
+- Supported continuous monitoring objectives through a defined quarterly review cadence validating access authorization over time.
 
-- Translated identity governance controls into audit-defensible evidence, bridging technical implementation with compliance requirements for NIST 800-53 and CMMC Level 2 assessments.
+- Validated review workflows through audit log correlation and access removal verification to confirm review decisions resulted in actual enforcement actions.
+
+---
 
 ## Supporting Bullets
 
-- Designed reviewer model enforcing separation of duties, ensuring users cannot review their own access and all decisions require documented justification.
+- Designed reviewer workflows preventing users from reviewing their own access assignments and requiring documented justification for review decisions.
 
-- Verified enforcement of denied access through auto-apply and audit log correlation, confirming that access removal occurs as a result of reviewer decisions.
+- Configured auto-apply settings within Microsoft Entra ID Identity Governance to automate denied access removal following review completion.
 
-- Mapped access review implementation to NIST 800-53 AC-2, AC-5, AC-6, CA-7, and AU-2, producing structured evidence aligned for CMMC Level 2 SSP inclusion.
+- Documented periodic access certification processes including review cadence, reviewer accountability, escalation procedures, and evidence retention requirements.
+
+- Mapped access review governance workflows to NIST 800-53 AC-2, AC-5, AC-6, CA-7, and AU-2 control concepts.
+
+- Maintained structured evidence artifacts including review screenshots, decision records, audit logs, and governance documentation.
+
+---
+
+*These bullets are intended for IAM, identity governance, access management, governance, and compliance-focused resume tailoring.*
