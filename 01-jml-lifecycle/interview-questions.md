@@ -1,61 +1,125 @@
 # Interview Questions — JML Lifecycle Pack
 
+---
+
 ## "Walk me through your JML process."
 
-My JML model is designed around lifecycle triggers, SLA enforcement, and least privilege controls across all identity states.
+My JML model is designed around lifecycle governance, SLA enforcement, least privilege, and auditability across all identity states.
 
-**Joiner:** When a new hire record is created in HR, an account is provisioned in Entra ID and assigned to role-based security groups based on department and job function. No direct user permissions are granted — all access flows through group membership. MFA is enforced via Conditional Access on first sign-in.
+### Joiner
+When a new hire event occurs, a user account is provisioned in Microsoft Entra ID and assigned to role-based security groups aligned to department and job function. Access is granted through group membership only — no direct user permissions are assigned. MFA is enforced through Conditional Access during initial authentication.
 
-**Mover:** When an internal role change is recorded, group memberships are reviewed against the new role profile. New access is granted and prior role access is removed within 24 hours. No accumulation — the delta is enforced clean.
+### Mover
+When a role change occurs, group memberships are reviewed against the updated role profile. New access is assigned and prior access is removed through a delta-based review process to prevent privilege accumulation across role changes.
 
-**Leaver:** When termination is confirmed, the account is disabled immediately, all group memberships are removed, and sign-in sessions are revoked. This closes the token persistence gap — disabling an account alone does not invalidate active sessions in Entra ID.
+### Leaver
+When termination is confirmed, the account is disabled immediately, group memberships are removed, and active sign-in sessions are revoked. This addresses token persistence risk, since disabling an account alone does not invalidate active refresh tokens within Microsoft Entra ID.
 
-*Evidence: JML-STEP-01 through JML-STEP-06.*
+**Evidence:** JML-STEP-01 through JML-STEP-06
 
 ---
 
 ## "How do you reduce orphaned account risk?"
 
-Three controls working together:
+This workflow uses multiple controls together to reduce orphaned account exposure:
 
-1. Immediate disablement — account cannot authenticate
-2. Session revocation — active refresh tokens are invalidated, not just expired naturally
-3. Group membership removal — access to all connected applications is cut
+- Immediate account disablement prevents new authentication attempts
+- Session revocation invalidates active refresh tokens
+- Group membership removal eliminates inherited application access
 
-The combination means a terminated user has no path back in — not through a cached session, not through a token, not through a group-inherited permission.
+Together, these controls remove both active and residual access paths following offboarding.
 
-*Evidence: JML-STEP-05 (disabled) and JML-STEP-06 (sessions revoked).*
+**Evidence:**  
+- JML-STEP-05 — account disabled  
+- JML-STEP-06 — active sessions revoked
 
 ---
 
 ## "How do you enforce least privilege?"
 
-Two mechanisms:
+Least privilege is enforced through two primary mechanisms:
 
-First, no direct user permissions — all access is assigned via security group membership. Access is role-scoped by design, not by individual judgment.
+### Role-Based Access Assignment
+All access is granted through role-based security groups rather than direct user permissions. Access decisions are based on job function and business role requirements.
 
-Second, the mover workflow enforces a delta review. When someone changes roles, prior group memberships are removed and new ones assigned. The system does not allow access to accumulate across roles over time.
+### Delta-Based Access Review
+During role changes, prior access is reviewed and removed before new access is assigned. This prevents privilege accumulation over time and maintains role alignment.
 
-*Evidence: JML-STEP-02 (group assignment), JML-STEP-04 (role change).*
+**Evidence:**  
+- JML-STEP-02 — role-based group assignment  
+- JML-STEP-04 — role transition and access correction
 
 ---
 
 ## "What's the difference between disabling an account and revoking sessions?"
 
-Disabling the account prevents new authentication attempts. But any existing sessions with valid refresh tokens can continue operating until those tokens expire — which can be hours or days depending on policy.
+Disabling an account blocks future authentication attempts, but existing sessions with valid refresh tokens may remain active until token expiration.
 
-Session revocation immediately invalidates all active refresh tokens. Combined with account disablement, this eliminates both new and existing access paths simultaneously.
+Session revocation invalidates active refresh tokens immediately.
 
-For a terminated employee you need both. Disablement alone leaves a window.
+For offboarding scenarios, both controls are important:
+- Account disablement prevents new logins
+- Session revocation removes active authenticated sessions
 
-*Evidence: JML-STEP-06 — "Successfully revoked sign-in sessions for JML Test User."*
+Using both controls together reduces residual access exposure during termination events.
+
+**Evidence:**  
+- JML-STEP-06 — active sign-in sessions revoked
 
 ---
 
-## "How does this map to CMMC Level 2?"
+## "How does this align to CMMC Level 2?"
 
-AC-2 requires organizations to manage information system accounts — including establishment, activation, modification, review, disablement, and removal. This JML pack provides documented evidence for each of those phases with Entra ID configuration screenshots and a policy artifact.
+This workflow aligns to several CMMC Level 2 practices associated with identity lifecycle governance, access control, and authentication management.
 
-AC-2(1) requires automated account management — this implementation uses group-based provisioning and deprovisioning rather than manual processes, satisfying the automation requirement.
+Examples include:
+- AC.L2-3.1.1 — limiting system access to authorized users
+- AC.L2-3.1.2 — limiting access to authorized transactions and functions
+- AC.L2-3.1.6 — use of non-privileged accounts
+- IA.L2-3.5.3 — multifactor authentication enforcement
+- AU.L2-3.3.1 — audit logging and retention
 
-This evidence package is structured to be dropped directly into an SSP as AC-2 implementation evidence. This approach ensures the control is not only documented, but demonstrably implemented and testable during assessment.
+This pack includes:
+- Governance documentation
+- Lifecycle workflow evidence
+- Control mappings
+- Microsoft Entra ID configuration evidence
+- Audit-ready screenshots aligned to control implementation
+
+The structure is designed to demonstrate how lifecycle governance concepts can support regulated IAM and compliance operations.
+
+---
+
+## "How do you handle privilege accumulation during role changes?"
+
+Privilege accumulation is addressed through a role-transition review process.
+
+When a user changes roles:
+1. Existing access is reviewed against the prior role
+2. Access no longer required is removed
+3. New access aligned to the updated role is assigned
+4. Group memberships are validated against least privilege expectations
+
+This reduces the risk of users retaining unnecessary access across multiple role transitions.
+
+**Evidence:**  
+- JML-STEP-04 — role-based access correction
+
+---
+
+## "Why use group-based access instead of direct permissions?"
+
+Group-based access improves:
+- scalability
+- consistency
+- auditability
+- access review efficiency
+- least privilege enforcement
+
+It also simplifies onboarding, role transitions, and offboarding workflows because access can be managed centrally through role-aligned security groups rather than individual permission assignments.
+
+This approach supports governance consistency and reduces configuration drift over time.
+
+---
+
+*This portfolio demonstrates governance concepts, operational workflows, and identity security practices within a controlled lab environment aligned to regulated IAM operations.*
