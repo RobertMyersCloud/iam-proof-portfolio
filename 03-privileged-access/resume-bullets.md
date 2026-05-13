@@ -2,24 +2,34 @@
 
 ## Primary Bullets
 
-- Implemented a just-in-time privileged access model in Microsoft Entra ID Privileged Identity Management, eliminating standing administrative access by enforcing eligible assignments, MFA, documented justification, and approval-gated activation aligned to NIST AC-6(5).
+- Built a just-in-time privileged access workflow in Microsoft Entra ID Privileged Identity Management (PIM) using eligible assignments, MFA enforcement, approval-based activation, and time-limited administrative access to reduce standing privileged access exposure. 
 
-- Enforced least privilege for administrative roles through time-bound activation, ensuring access is granted only for the minimum required duration, automatically expires, and requires re-authorization for each use aligned to NIST AC-6.
+- Configured privileged role activation controls requiring MFA, documented business justification, and designated approver authorization prior to privileged access activation. 
 
-- Configured PIM role settings requiring MFA, business justification, and designated approver authorization, eliminating self-approval paths and undocumented privileged access aligned to IA-2 and AC-3.
+- Enforced least privilege through time-bound privileged role activation with automatic expiration, reducing persistent administrative access exposure and supporting just-in-time access governance principles. 
 
-- Produced audit-ready privileged access evidence including role configuration, eligible assignments, activation requests with justification, approval decisions, and PIM audit logs — enabling direct use in CMMC Level 2 and SOC 2 Type II assessments.
+- Applied approval-gated activation workflows preventing self-approval and requiring reviewer validation before privileged administrative access was granted. 
 
-- Validated full privileged access control chain from role configuration through activation and approval enforcement, confirming access is not granted without MFA, justification, and explicit authorization.
+- Produced audit-ready privileged access governance evidence including role configurations, eligible assignments, activation requests, approval workflows, and Microsoft Entra ID PIM audit log correlation aligned to NIST 800-53 and CMMC Level 2 concepts. 
 
-- Mapped PIM implementation to NIST 800-53 AC-2, AC-3, AC-6, AC-6(5), AC-6(10), IA-2, IA-2(1), and AU-2, producing structured evidence aligned for CMMC Level 2 SSP inclusion.
+- Validated privileged access enforcement through activation testing, approval workflow verification, and audit log review to confirm privileged access was not granted without MFA and approval completion. 
 
-- Translated privileged access governance controls into audit-defensible evidence, bridging technical implementation with compliance requirements for NIST 800-53 and CMMC Level 2.
+- Supported privileged access governance objectives aligned to NIST 800-53 AC-2, AC-3, AC-6, AC-6(5), IA-2, and AU-2 control concepts through Microsoft Entra ID PIM configuration and workflow validation. :contentReference[oaicite:6]{index=6}
+
+---
 
 ## Supporting Bullets
 
-- Designed PIM approver model enforcing separation of duties — users cannot self-approve privileged access requests, and approvers must validate documented justification before granting access.
+- Designed privileged access workflows using eligible role assignments to eliminate standing administrative access for in-scope privileged roles. 
 
-- Eliminated credential theft risk associated with standing administrative access — JIT model ensures stolen credentials cannot be used for persistent privileged access without MFA and approval.
+- Configured role-tiered activation duration limits based on privileged access risk level and least privilege governance principles. :contentReference[oaicite:8]{index=8}
 
-- Configured role-tiered activation controls with differentiated duration limits — Tier 0 critical roles restricted to 2-hour maximum activation, standard roles to 8-hour maximum, aligned to risk-based least privilege principles.
+- Implemented reviewer accountability controls ensuring privileged access requests required independent approval and documented business justification prior to activation. 
+
+- Documented privileged access governance processes including activation workflows, escalation procedures, enforcement controls, and audit monitoring requirements. :contentReference[oaicite:10]{index=10}
+
+- Maintained structured privileged access evidence including configuration screenshots, activation requests, audit logs, and governance documentation supporting traceable privileged access workflows. 
+
+---
+
+*These bullets are intended for IAM, privileged access management (PAM), identity governance, governance, and compliance-focused resume tailoring.*
