@@ -1,90 +1,178 @@
 # Interview Questions — Privileged Access Pack
 
+---
+
 ## "How do you manage privileged access in your environment?"
 
-I use a just-in-time model through Microsoft Entra ID Privileged Identity Management. No administrative role is permanently assigned — users are assigned as eligible and must request activation when they have a legitimate need.
+I use a just-in-time privileged access model through Microsoft Entra ID Privileged Identity Management (PIM).
 
-Every activation requires three things: MFA, documented business justification, and approval from a designated approver. Access is time-limited and expires automatically. There is no standing administrative access, no self-approval path, and no activation without a documented reason.
+Administrative roles are assigned as eligible rather than permanently active. Users request activation only when privileged access is required for a specific administrative task.
 
-This ensures privileged access is not persistent, not self-granted, and always traceable — which is the core requirement for both security and compliance.
+The activation workflow requires:
+- MFA
+- documented business justification
+- approval from a designated approver
+- time-limited activation duration
 
-*Evidence: PIM-STEP-01 through PIM-STEP-07.*
+Access expires automatically after the approved duration.
+
+This approach reduces standing administrative access exposure while improving accountability, traceability, and least privilege enforcement.
+
+**Evidence:**  
+- PIM-STEP-01 through PIM-STEP-07 :contentReference[oaicite:0]{index=0}
 
 ---
 
 ## "What is the difference between eligible and active assignment in PIM?"
 
-An active assignment grants the role immediately and permanently — the user has standing access without any activation step. This is the traditional model and the one PIM is designed to replace.
+An active assignment grants privileged access immediately and continuously. The user maintains standing administrative access without requiring activation.
 
-An eligible assignment means the user can request the role but does not have it by default. To get access they must go through the activation workflow — MFA, justification, approval. The role is then active for a defined time window and expires automatically.
+An eligible assignment allows the user to request privileged access when required but does not grant administrative permissions by default.
 
-For any administrative role with real privilege, eligible assignment is the correct model. Active assignments should only exist for break-glass accounts and service accounts with documented exception approval.
+To activate an eligible role, the user must complete the activation workflow including:
+- MFA
+- documented justification
+- approval
+- duration selection
 
----
+For privileged administrative roles, eligible assignment helps reduce standing access exposure and supports just-in-time access governance principles.
 
-## "How do you prevent privilege escalation?"
+Permanent active assignments should be restricted to approved exception scenarios such as break-glass operational accounts.
 
-Three controls working together:
-
-First, eligible assignment means no one has standing administrative access that could be leveraged for escalation.
-
-Second, the approval gate means even a compromised account cannot self-escalate — a separate approver must validate the request.
-
-Third, MFA on every activation means stolen password credentials alone are insufficient to activate a privileged role.
-
-Combined, these controls significantly reduce the primary privilege escalation paths — standing access exploitation, credential reuse, and unauthorized self-elevation.
-
-*Evidence: PIM-STEP-06 — pending approval confirms no self-escalation path.*
+:contentReference[oaicite:1]{index=1}
 
 ---
 
-## "How does this map to CMMC Level 2?"
+## "How do you reduce privilege escalation risk?"
 
-Three primary practices:
+This implementation uses several controls together to reduce privilege escalation exposure:
 
-AC.L2-3.1.5 requires employing least privilege — JIT activation with time-limited duration enforces least privilege at runtime, not just at provisioning.
+### Eligible Assignment Model
+Users do not maintain standing administrative access.
 
-AC.L2-3.1.6 requires using non-privileged accounts for non-privileged activities — the eligible model enforces this by design. Users operate from standard accounts and activate privilege only when needed.
+### Approval Workflow
+Privileged access requests require approval before activation. Users cannot self-approve privileged access requests.
 
-IA.L2-3.5.3 requires MFA — enforced on every activation request with no bypass path.
+### MFA Enforcement
+Activation requires MFA, reducing the risk associated with password-only credential compromise.
 
-This also supports AU.L2-3.3.2 by ensuring all privileged access events are attributable to a named actor with timestamped audit records.
+### Time-Limited Access
+Administrative access expires automatically after the approved activation duration.
 
-The evidence package — role configuration, eligible assignments, activation request, and PIM audit log — is structured to be dropped directly into an SSP as AC-6 and IA-2 implementation evidence. This ensures the control is not only documented but demonstrably enforced and testable during assessment.
+Together, these controls reduce common privileged access risks associated with standing access, unauthorized elevation, and credential misuse.
+
+**Evidence:**  
+- PIM-STEP-06 — pending approval workflow enforced :contentReference[oaicite:2]{index=2}
+
+---
+
+## "How does this align to CMMC Level 2?"
+
+This workflow supports several CMMC Level 2 practices associated with privileged access governance and authentication controls.
+
+Examples include:
+- AC.L2-3.1.5 — least privilege enforcement
+- AC.L2-3.1.6 — use of non-privileged accounts
+- IA.L2-3.5.3 — multifactor authentication
+- AU.L2-3.3.2 — traceable audit logging
+
+The implementation demonstrates:
+- eligible role assignment
+- MFA enforcement
+- approval-based activation
+- time-limited privileged access
+- audit traceability
+
+The evidence package includes:
+- role configuration
+- eligible assignments
+- activation workflows
+- audit logs
+- governance documentation
+
+This structure demonstrates traceable privileged access governance workflows aligned to regulated environments.
+
+:contentReference[oaicite:3]{index=3}
 
 ---
 
 ## "What happens if a privileged access request is denied?"
 
-The user receives a notification that the request was denied and no access is granted. The denial is recorded in the PIM audit log with the approver's identity and timestamp.
+If a request is denied:
+- privileged access is not granted
+- the denial is recorded within audit logs
+- the requestor may submit an updated request with revised justification if appropriate
 
-The user must either revise their justification and resubmit, or escalate through a defined exception process if the denial was made in error.
+This follows a default-deny governance approach where privileged access requires positive authorization before activation.
 
-The critical point is that denial is the safe outcome — access defaults to not granted. The burden is on the requestor to justify access, not on the approver to justify denial.
+The workflow ensures privileged access is not activated without approval.
 
----
-
-## "How do you prove your privileged access controls actually work?"
-
-I validate through outcome verification, not just configuration review.
-
-I confirm that no permanent active assignments exist for in-scope roles — the assignment tab should show eligible only. I verify that the activation workflow actually routes to an approver and does not grant access immediately. I check the PIM audit log to confirm that all activations have justification, MFA completion, and approval events recorded.
-
-The pending approval state in my evidence is the strongest proof — it shows that after submitting a valid activation request, access was not granted. The system enforced the gate.
-
-*Evidence: PIM-STEP-06 — "Your request is pending for approval."*
+:contentReference[oaicite:4]{index=4}
 
 ---
 
-## "What are common failures in PIM implementations?"
+## "How do you validate that privileged access controls are functioning correctly?"
 
-The most common failure is enabling PIM without fully enforcing its controls.
+Control validation includes both configuration review and workflow testing.
 
-Typical issues include:
+Validation activities include:
+- verifying eligible-only assignments for in-scope roles
+- confirming activation requests require approval
+- validating MFA enforcement during activation
+- reviewing audit logs for activation events and approvals
+- confirming privileged access is not activated immediately after request submission
 
-- Leaving permanent active assignments in place alongside eligible assignments
-- Allowing activation without approval — defeating the purpose of the workflow
-- Weak or missing justification requirements — rubber-stamped approvals with no business reason
-- Not reviewing PIM audit logs for anomalous activation patterns
+The pending approval state provides evidence that privileged access remains gated until workflow approval is completed.
 
-A properly implemented PIM solution eliminates standing access, enforces MFA and approval, requires justification, and produces a complete audit trail. Without enforcement, PIM becomes a monitoring tool instead of a control — and that distinction is exactly what assessors test for.
+**Evidence:**  
+- PIM-STEP-06 — pending approval state  
+- PIM-STEP-07 — audit log correlation :contentReference[oaicite:5]{index=5}
+
+---
+
+## "What are common weaknesses in privileged access implementations?"
+
+Common weaknesses include:
+- leaving permanent active assignments in place
+- missing approval requirements
+- weak or undocumented business justification
+- lack of audit log review
+- excessive activation durations
+- inconsistent MFA enforcement
+
+A strong privileged access governance model requires:
+- eligible assignment
+- MFA enforcement
+- approval-based activation
+- time-limited access
+- audit traceability
+- ongoing monitoring
+
+Without enforcement controls, privileged access management may become visibility-only rather than an operational governance control.
+
+:contentReference[oaicite:6]{index=6}
+
+---
+
+## "Why is just-in-time access important?"
+
+Just-in-time access reduces the amount of time privileged access exists within the environment.
+
+Instead of maintaining persistent administrative access:
+- users activate access only when required
+- access expires automatically
+- all activity remains traceable
+
+This reduces exposure associated with:
+- compromised administrative credentials
+- standing privileged sessions
+- privilege misuse
+- unauthorized long-term administrative access
+
+JIT access supports least privilege and improves privileged access accountability.
+
+:contentReference[oaicite:7]{index=7}
+
+---
+
+*This portfolio demonstrates governance concepts, operational workflows, and identity security practices within a controlled lab environment aligned to regulated IAM operations.*
