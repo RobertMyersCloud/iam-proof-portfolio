@@ -1,67 +1,71 @@
 <#
 .SYNOPSIS
-    Automates the Entra ID leaver workflow — disabling accounts, revoking
-    sessions, removing group memberships, and removing role assignments for
-    offboarding users.
+    Automates the Microsoft Entra ID leaver workflow with audit-ready logging,
+    WhatIf safety, protected account guardrails, session revocation, group
+    removal, role assignment removal, and post-execution validation.
 
 .DESCRIPTION
-    Executes the leaver phase of the JML identity lifecycle for one or more
-    users in Microsoft Entra ID. Performs account disablement, sign-in session
-    revocation, group membership removal, and role assignment removal in a
-    controlled, logged sequence with post-action validation.
+    Executes the leaver phase of the Joiner-Mover-Leaver identity lifecycle for
+    one or more Microsoft Entra ID users.
 
-    Supports WhatIf mode for safe pre-execution review, protected account
-    guardrails to prevent accidental offboarding of break-glass or admin
-    accounts, optional ticket/reference field for audit traceability, and
-    produces a detailed timestamped execution log.
+    Workflow:
+    1. Validate protected account guardrails
+    2. Disable account
+    3. Validate account disabled state
+    4. Revoke sign-in sessions
+    5. Remove group memberships
+    6. Remove direct directory role assignments
+    7. Perform residual access validation
+    8. Export CSV and JSON audit evidence
 
-    Output is designed for direct use as AC-2 leaver lifecycle evidence and
-    supports JML offboarding audit workflows.
+    Designed for IAM governance operations, AC-2 offboarding evidence,
+    CMMC / NIST-aligned lifecycle control validation, and ticket-based
+    audit traceability.
 
-    ⚠️  DESTRUCTIVE OPERATION — always run with -WhatIf first.
+    Always run with -WhatIf before live execution.
 
 .PARAMETER UserPrincipalName
-    UPN of the user to offboard. Accepts single value or array.
+    One or more user principal names to offboard.
 
 .PARAMETER TicketReference
-    Optional change ticket or incident reference number for audit logging.
+    Optional change ticket, incident, or service request reference.
 
 .PARAMETER ProtectedAccounts
-    Array of UPNs that must never be offboarded (break-glass, emergency admins).
-    Script will skip and log these accounts without taking action.
+    UPNs that must never be offboarded, such as break-glass accounts.
 
-.PARAMETER WhatIf
-    Simulates all actions without making changes. Always run this first.
+.PARAMETER ProtectedRoles
+    Directory roles that trigger a protected-user warning if assigned.
 
 .PARAMETER SkipGroupRemoval
-    Switch to skip group membership removal. Other steps still execute.
+    Skip group membership removal while still disabling account and revoking sessions.
 
 .PARAMETER OutputPath
-    Path for execution log. Defaults to current directory.
+    Path where CSV and JSON execution logs will be written.
 
 .EXAMPLE
-    # ALWAYS run WhatIf first
-    .\Disable-EntraLeaverAccount.ps1 -UserPrincipalName "jml.test@rjmyers.cloud" -WhatIf
+    .\Disable-EntraLeaverAccount.ps1 -UserPrincipalName "user@domain.com" -WhatIf
 
-    # Execute with ticket reference
-    .\Disable-EntraLeaverAccount.ps1 -UserPrincipalName "jml.test@rjmyers.cloud" -TicketReference "CHG-2026-0342"
-
-    # Offboard multiple users with protected account guardrail
+.EXAMPLE
     .\Disable-EntraLeaverAccount.ps1 `
-        -UserPrincipalName @("user1@domain.com","user2@domain.com") `
-        -TicketReference "CHG-2026-0343" `
+        -UserPrincipalName "user@domain.com" `
+        -TicketReference "CHG-2026-0342" `
         -ProtectedAccounts @("breakglass@domain.com")
 
 .NOTES
-    Required modules: Microsoft.Graph.Users, Microsoft.Graph.Groups,
-                      Microsoft.Graph.Identity.Governance
-    Required permissions: User.ReadWrite.All, GroupMember.ReadWrite.All,
-                          RoleManagement.ReadWrite.Directory
+    Required modules:
+        Microsoft.Graph.Users
+        Microsoft.Graph.Groups
+        Microsoft.Graph.Identity.Governance
+
+    Required permissions:
+        User.ReadWrite.All
+        GroupMember.ReadWrite.All
+        RoleManagement.ReadWrite.Directory
+
     Author: Robert J. Myers
-    Version: 1.1
+    Version: 1.2
     Date: 2026-03-24
-    Control mapping: AC-2, AC-2(2), IA-2
-    ⚠️  Run with -WhatIf before executing in production.
+    Control Mapping: AC-2, AC-2(2), IA-2, AU-2
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
@@ -74,6 +78,13 @@ param (
 
     [Parameter(Mandatory = $false)]
     [string[]]$ProtectedAccounts = @(),
+
+    [Parameter(Mandatory = $false)]
+    [string[]]$ProtectedRoles = @(
+        "Global Administrator",
+        "Privileged Role Administrator",
+        "Security Administrator"
+    ),
 
     [Parameter(Mandatory = $false)]
     [switch]$SkipGroupRemoval,
@@ -89,9 +100,10 @@ $requiredModules = @(
     "Microsoft.Graph.Groups",
     "Microsoft.Graph.Identity.Governance"
 )
+
 foreach ($module in $requiredModules) {
     if (-not (Get-Module -ListAvailable -Name $module)) {
-        Write-Error "Required module not found: $module. Run: Install-Module $module"
+        Write-Error "Required module not found: $module. Run: Install-Module $module -Scope CurrentUser"
         exit 1
     }
 }
@@ -99,23 +111,73 @@ foreach ($module in $requiredModules) {
 # ── Output Path Validation ────────────────────────────────────────────────────
 
 if (-not (Test-Path $OutputPath)) {
-    New-Item -ItemType Directory -Path $OutputPath | Out-Null
+    New-Item -ItemType Directory -Path $OutputPath -Force | Out-Null
 }
 
-# ── Execution Mode ────────────────────────────────────────────────────────────
+# ── Execution Metadata ────────────────────────────────────────────────────────
 
+$timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+$executionId = [guid]::NewGuid().ToString()
 $executionMode = if ($WhatIfPreference) { "Simulation (WhatIf)" } else { "Live Execution" }
-Write-Host "`n[MODE] $executionMode" -ForegroundColor Yellow
+$scriptStartTime = Get-Date
+$logEntries = @()
+
+Write-Host "`n[EXECUTION ID] $executionId" -ForegroundColor Cyan
+Write-Host "[MODE] $executionMode" -ForegroundColor Yellow
 
 if ($WhatIfPreference) {
-    Write-Host "[WHATIF] No changes will be made. Review output then re-run without -WhatIf.`n" -ForegroundColor Yellow
+    Write-Host "[WHATIF] No changes will be made. Review output before live execution.`n" -ForegroundColor Yellow
 }
 
-# ── Connect ───────────────────────────────────────────────────────────────────
+# ── Logging Function ──────────────────────────────────────────────────────────
+
+function Write-Log {
+    param(
+        [string]$UPN,
+        [string]$Action,
+        [string]$Status,
+        [string]$Severity = "Info",
+        [string]$ErrorCode = "",
+        [string]$Detail = ""
+    )
+
+    $entry = [PSCustomObject]@{
+        ExecutionId       = $executionId
+        Timestamp         = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+        UserPrincipalName = $UPN
+        Action            = $Action
+        Status            = $Status
+        Severity          = $Severity
+        ErrorCode         = $ErrorCode
+        Detail            = $Detail
+        TicketReference   = $TicketReference
+        ExecutionMode     = $executionMode
+    }
+
+    $script:logEntries += $entry
+
+    $color = switch ($Status) {
+        "Success" { "Green" }
+        "WhatIf"  { "Yellow" }
+        "Skipped" { "Cyan" }
+        "Warning" { "Magenta" }
+        default   { "Red" }
+    }
+
+    Write-Host "  [$Status][$Severity] $Action — $UPN$(if ($Detail) { " — $Detail" })" -ForegroundColor $color
+}
+
+# ── Connect to Microsoft Graph ────────────────────────────────────────────────
 
 Write-Host "[INFO] Connecting to Microsoft Graph..." -ForegroundColor Cyan
+
 try {
-    Connect-MgGraph -Scopes "User.ReadWrite.All", "GroupMember.ReadWrite.All", "RoleManagement.ReadWrite.Directory" -NoWelcome
+    Connect-MgGraph -Scopes `
+        "User.ReadWrite.All",
+        "GroupMember.ReadWrite.All",
+        "RoleManagement.ReadWrite.Directory" `
+        -NoWelcome
+
     Write-Host "[INFO] Connected successfully." -ForegroundColor Green
 }
 catch {
@@ -123,220 +185,398 @@ catch {
     exit 1
 }
 
-# ── Execution Log ─────────────────────────────────────────────────────────────
+# ── Helper: Get Role Assignments ──────────────────────────────────────────────
 
-$timestamp  = Get-Date -Format "yyyyMMdd-HHmmss"
-$logEntries = @()
+function Get-UserDirectoryRoleAssignments {
+    param(
+        [string]$UserId
+    )
 
-function Write-Log {
-    param($UPN, $Action, $Status, $Detail = "")
-    $entry = [PSCustomObject]@{
-        Timestamp         = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
-        UserPrincipalName = $UPN
-        Action            = $Action
-        Status            = $Status
-        Detail            = $Detail
-        TicketReference   = $TicketReference
-        ExecutionMode     = $executionMode
+    try {
+        return Get-MgRoleManagementDirectoryRoleAssignment `
+            -Filter "principalId eq '$UserId'" `
+            -All
     }
-    $script:logEntries += $entry
-    $color = switch ($Status) {
-        "Success" { "Green" }
-        "WhatIf"  { "Yellow" }
-        "Skipped" { "Cyan" }
-        default   { "Red" }
+    catch {
+        return @()
     }
-    Write-Host "  [$Status] $Action — $UPN$(if ($Detail) { " — $Detail" })" -ForegroundColor $color
 }
 
-# ── Process Each User ─────────────────────────────────────────────────────────
+# ── Process Users ─────────────────────────────────────────────────────────────
 
 foreach ($upn in $UserPrincipalName) {
+
+    $userStartTime = Get-Date
 
     Write-Host "`n[INFO] Processing leaver: $upn" -ForegroundColor Cyan
     Write-Host "  Ticket reference : $TicketReference"
     Write-Host "  Execution mode   : $executionMode"
 
-    # ── Protected Account Check ───────────────────────────────────────────────
+    # Protected UPN guardrail
     if ($ProtectedAccounts -contains $upn) {
-        Write-Log -UPN $upn -Action "Pre-check" -Status "Skipped" `
-            -Detail "Protected account — no action taken. Remove from ProtectedAccounts if offboarding is intentional."
+        Write-Log `
+            -UPN $upn `
+            -Action "Protected Account Check" `
+            -Status "Skipped" `
+            -Severity "Warning" `
+            -ErrorCode "PROTECTED_ACCOUNT" `
+            -Detail "Protected account — no action taken."
+
         continue
     }
 
-    # ── Get User ──────────────────────────────────────────────────────────────
+    # Get user
     try {
-        $user = Get-MgUser -UserId $upn `
+        $user = Get-MgUser `
+            -UserId $upn `
             -Property "id,displayName,userPrincipalName,accountEnabled" `
             -ErrorAction Stop
     }
     catch {
-        Write-Log -UPN $upn -Action "Get User" -Status "Failed" -Detail "User not found: $_"
+        Write-Log `
+            -UPN $upn `
+            -Action "Get User" `
+            -Status "Failed" `
+            -Severity "Critical" `
+            -ErrorCode "USER_NOT_FOUND" `
+            -Detail "$_"
+
         continue
     }
 
-    if (-not $user.AccountEnabled) {
-        Write-Log -UPN $upn -Action "Pre-check" -Status "Skipped" -Detail "Account already disabled — sessions and groups will still be processed"
+    # Protected role detection
+    $roleAssignments = Get-UserDirectoryRoleAssignments -UserId $user.Id
+
+    if ($roleAssignments.Count -gt 0) {
+        Write-Log `
+            -UPN $upn `
+            -Action "Role Assignment Pre-Check" `
+            -Status "Warning" `
+            -Severity "Warning" `
+            -ErrorCode "ROLE_ASSIGNMENTS_DETECTED" `
+            -Detail "$($roleAssignments.Count) direct role assignment(s) detected. Review before live execution."
     }
 
-    # ── Step 1: Disable Account ───────────────────────────────────────────────
+    if (-not $user.AccountEnabled) {
+        Write-Log `
+            -UPN $upn `
+            -Action "Pre-Check" `
+            -Status "Skipped" `
+            -Severity "Info" `
+            -ErrorCode "ACCOUNT_ALREADY_DISABLED" `
+            -Detail "Account already disabled — continuing session, group, and role cleanup."
+    }
+
+    # Step 1: Disable Account
     if ($PSCmdlet.ShouldProcess($upn, "Disable Entra ID account")) {
         try {
-            Update-MgUser -UserId $user.Id -AccountEnabled $false
-            Write-Log -UPN $upn -Action "Disable Account" -Status "Success" `
-                -Detail "Account disabled — authentication blocked"
+            Update-MgUser -UserId $user.Id -AccountEnabled:$false
+
+            Write-Log `
+                -UPN $upn `
+                -Action "Disable Account" `
+                -Status "Success" `
+                -Severity "Info" `
+                -Detail "Account disabled — authentication blocked."
         }
         catch {
-            Write-Log -UPN $upn -Action "Disable Account" -Status "Failed" -Detail $_
+            Write-Log `
+                -UPN $upn `
+                -Action "Disable Account" `
+                -Status "Failed" `
+                -Severity "Critical" `
+                -ErrorCode "DISABLE_ACCOUNT_FAILED" `
+                -Detail "$_"
         }
     }
     else {
-        Write-Log -UPN $upn -Action "Disable Account" -Status "WhatIf" `
-            -Detail "Would disable account and block all authentication"
+        Write-Log `
+            -UPN $upn `
+            -Action "Disable Account" `
+            -Status "WhatIf" `
+            -Severity "Info" `
+            -Detail "Would disable account and block authentication."
     }
 
-    # ── Step 1a: Validate Account State ──────────────────────────────────────
+    # Step 1a: Validate Disabled State
     if (-not $WhatIfPreference) {
         try {
             $updatedUser = Get-MgUser -UserId $user.Id -Property "accountEnabled"
+
             if (-not $updatedUser.AccountEnabled) {
-                Write-Log -UPN $upn -Action "Validation" -Status "Success" `
-                    -Detail "Account confirmed disabled"
+                Write-Log `
+                    -UPN $upn `
+                    -Action "Validate Disabled State" `
+                    -Status "Success" `
+                    -Severity "Info" `
+                    -Detail "Account confirmed disabled."
             }
             else {
-                Write-Log -UPN $upn -Action "Validation" -Status "Failed" `
-                    -Detail "Account still enabled after disable attempt — investigate immediately"
+                Write-Log `
+                    -UPN $upn `
+                    -Action "Validate Disabled State" `
+                    -Status "Failed" `
+                    -Severity "Critical" `
+                    -ErrorCode "ACCOUNT_STILL_ENABLED" `
+                    -Detail "Account still enabled after disable attempt."
             }
         }
         catch {
-            Write-Log -UPN $upn -Action "Validation" -Status "Failed" -Detail $_
+            Write-Log `
+                -UPN $upn `
+                -Action "Validate Disabled State" `
+                -Status "Failed" `
+                -Severity "Critical" `
+                -ErrorCode "VALIDATION_FAILED" `
+                -Detail "$_"
         }
     }
 
-    # ── Step 2: Revoke Sessions ───────────────────────────────────────────────
+    # Step 2: Revoke Sessions
     if ($PSCmdlet.ShouldProcess($upn, "Revoke all sign-in sessions")) {
         try {
             Revoke-MgUserSignInSession -UserId $user.Id
-            Write-Log -UPN $upn -Action "Revoke Sessions" -Status "Success" `
-                -Detail "All sign-in sessions and refresh tokens revoked"
+
+            Write-Log `
+                -UPN $upn `
+                -Action "Revoke Sessions" `
+                -Status "Success" `
+                -Severity "Info" `
+                -Detail "All sign-in sessions and refresh tokens revoked."
         }
         catch {
-            Write-Log -UPN $upn -Action "Revoke Sessions" -Status "Failed" -Detail $_
+            Write-Log `
+                -UPN $upn `
+                -Action "Revoke Sessions" `
+                -Status "Failed" `
+                -Severity "Critical" `
+                -ErrorCode "SESSION_REVOCATION_FAILED" `
+                -Detail "$_"
         }
     }
     else {
-        Write-Log -UPN $upn -Action "Revoke Sessions" -Status "WhatIf" `
-            -Detail "Would revoke all sign-in sessions and refresh tokens"
+        Write-Log `
+            -UPN $upn `
+            -Action "Revoke Sessions" `
+            -Status "WhatIf" `
+            -Severity "Info" `
+            -Detail "Would revoke all sign-in sessions and refresh tokens."
     }
 
-    # ── Step 3: Remove Group Memberships ──────────────────────────────────────
+    # Step 3: Remove Group Memberships
     if (-not $SkipGroupRemoval) {
         try {
             $memberships = Get-MgUserMemberOf -UserId $user.Id -All |
                 Where-Object { $_."@odata.type" -eq "#microsoft.graph.group" }
 
             if ($memberships.Count -eq 0) {
-                Write-Log -UPN $upn -Action "Group Removal" -Status "Skipped" `
-                    -Detail "No group memberships found"
+                Write-Log `
+                    -UPN $upn `
+                    -Action "Group Removal" `
+                    -Status "Skipped" `
+                    -Severity "Info" `
+                    -Detail "No group memberships found."
             }
             else {
                 foreach ($group in $memberships) {
                     $groupName = $group.AdditionalProperties["displayName"]
+
                     if ($PSCmdlet.ShouldProcess($upn, "Remove from group: $groupName")) {
                         try {
-                            Remove-MgGroupMemberByRef -GroupId $group.Id -DirectoryObjectId $user.Id
-                            Write-Log -UPN $upn -Action "Remove Group" -Status "Success" `
-                                -Detail "Removed from: $groupName"
+                            Remove-MgGroupMemberByRef `
+                                -GroupId $group.Id `
+                                -DirectoryObjectId $user.Id
+
+                            Write-Log `
+                                -UPN $upn `
+                                -Action "Remove Group" `
+                                -Status "Success" `
+                                -Severity "Info" `
+                                -Detail "Removed from group: $groupName"
                         }
                         catch {
-                            Write-Log -UPN $upn -Action "Remove Group" -Status "Failed" `
+                            Write-Log `
+                                -UPN $upn `
+                                -Action "Remove Group" `
+                                -Status "Failed" `
+                                -Severity "Warning" `
+                                -ErrorCode "GROUP_REMOVE_FAILED" `
                                 -Detail "Group: $groupName — $_"
                         }
                     }
                     else {
-                        Write-Log -UPN $upn -Action "Remove Group" -Status "WhatIf" `
-                            -Detail "Would remove from: $groupName"
+                        Write-Log `
+                            -UPN $upn `
+                            -Action "Remove Group" `
+                            -Status "WhatIf" `
+                            -Severity "Info" `
+                            -Detail "Would remove from group: $groupName"
                     }
                 }
             }
         }
         catch {
-            Write-Log -UPN $upn -Action "Get Groups" -Status "Failed" -Detail $_
+            Write-Log `
+                -UPN $upn `
+                -Action "Get Groups" `
+                -Status "Failed" `
+                -Severity "Warning" `
+                -ErrorCode "GET_GROUPS_FAILED" `
+                -Detail "$_"
         }
     }
     else {
-        Write-Log -UPN $upn -Action "Group Removal" -Status "Skipped" `
-            -Detail "-SkipGroupRemoval specified"
+        Write-Log `
+            -UPN $upn `
+            -Action "Group Removal" `
+            -Status "Skipped" `
+            -Severity "Info" `
+            -Detail "-SkipGroupRemoval specified."
     }
 
-    # ── Step 4: Remove Role Assignments ──────────────────────────────────────
+    # Step 4: Remove Direct Role Assignments
     try {
-        $roleAssignments = Get-MgRoleManagementDirectoryRoleAssignment `
-            -Filter "principalId eq '$($user.Id)'" -All
+        $roleAssignments = Get-UserDirectoryRoleAssignments -UserId $user.Id
 
         if ($roleAssignments.Count -eq 0) {
-            Write-Log -UPN $upn -Action "Role Assignment Removal" -Status "Skipped" `
-                -Detail "No direct role assignments found"
+            Write-Log `
+                -UPN $upn `
+                -Action "Role Assignment Removal" `
+                -Status "Skipped" `
+                -Severity "Info" `
+                -Detail "No direct role assignments found."
         }
         else {
             foreach ($role in $roleAssignments) {
-                $roleName = $role.RoleDefinitionId
-                if ($PSCmdlet.ShouldProcess($upn, "Remove role assignment: $roleName")) {
+                $roleId = $role.RoleDefinitionId
+
+                if ($PSCmdlet.ShouldProcess($upn, "Remove role assignment: $roleId")) {
                     try {
                         Remove-MgRoleManagementDirectoryRoleAssignment `
                             -UnifiedRoleAssignmentId $role.Id
-                        Write-Log -UPN $upn -Action "Remove Role Assignment" -Status "Success" `
-                            -Detail "Removed role: $roleName"
+
+                        Write-Log `
+                            -UPN $upn `
+                            -Action "Remove Role Assignment" `
+                            -Status "Success" `
+                            -Severity "Info" `
+                            -Detail "Removed role assignment: $roleId"
                     }
                     catch {
-                        Write-Log -UPN $upn -Action "Remove Role Assignment" -Status "Failed" `
-                            -Detail "Role: $roleName — $_"
+                        Write-Log `
+                            -UPN $upn `
+                            -Action "Remove Role Assignment" `
+                            -Status "Failed" `
+                            -Severity "Warning" `
+                            -ErrorCode "ROLE_REMOVE_FAILED" `
+                            -Detail "Role: $roleId — $_"
                     }
                 }
                 else {
-                    Write-Log -UPN $upn -Action "Remove Role Assignment" -Status "WhatIf" `
-                        -Detail "Would remove role: $roleName"
+                    Write-Log `
+                        -UPN $upn `
+                        -Action "Remove Role Assignment" `
+                        -Status "WhatIf" `
+                        -Severity "Info" `
+                        -Detail "Would remove role assignment: $roleId"
                 }
             }
         }
     }
     catch {
-        Write-Log -UPN $upn -Action "Get Role Assignments" -Status "Failed" -Detail $_
+        Write-Log `
+            -UPN $upn `
+            -Action "Get Role Assignments" `
+            -Status "Failed" `
+            -Severity "Warning" `
+            -ErrorCode "GET_ROLE_ASSIGNMENTS_FAILED" `
+            -Detail "$_"
     }
+
+    # Step 5: Post-Execution Residual Access Validation
+    if (-not $WhatIfPreference) {
+        try {
+            $remainingGroups = Get-MgUserMemberOf -UserId $user.Id -All |
+                Where-Object { $_."@odata.type" -eq "#microsoft.graph.group" }
+
+            $remainingRoles = Get-UserDirectoryRoleAssignments -UserId $user.Id
+
+            $residualAccess = ($remainingGroups.Count -gt 0 -or $remainingRoles.Count -gt 0)
+
+            if ($residualAccess) {
+                Write-Log `
+                    -UPN $upn `
+                    -Action "Residual Access Validation" `
+                    -Status "Warning" `
+                    -Severity "Warning" `
+                    -ErrorCode "RESIDUAL_ACCESS_REMAINS" `
+                    -Detail "Remaining groups: $($remainingGroups.Count); remaining role assignments: $($remainingRoles.Count)"
+            }
+            else {
+                Write-Log `
+                    -UPN $upn `
+                    -Action "Residual Access Validation" `
+                    -Status "Success" `
+                    -Severity "Info" `
+                    -Detail "No remaining group memberships or direct role assignments detected."
+            }
+        }
+        catch {
+            Write-Log `
+                -UPN $upn `
+                -Action "Residual Access Validation" `
+                -Status "Failed" `
+                -Severity "Warning" `
+                -ErrorCode "RESIDUAL_VALIDATION_FAILED" `
+                -Detail "$_"
+        }
+    }
+
+    $userDuration = [math]::Round(((Get-Date) - $userStartTime).TotalSeconds, 2)
+
+    Write-Log `
+        -UPN $upn `
+        -Action "User Workflow Complete" `
+        -Status "Success" `
+        -Severity "Info" `
+        -Detail "Workflow completed in $userDuration seconds."
 
     Write-Host "  [COMPLETE] Leaver workflow finished for: $upn" -ForegroundColor Cyan
 }
 
-# ── Export Log ────────────────────────────────────────────────────────────────
+# ── Export Logs ───────────────────────────────────────────────────────────────
 
-$logFile  = Join-Path $OutputPath "leaver-execution-log-$timestamp.csv"
+$logFile = Join-Path $OutputPath "leaver-execution-log-$timestamp.csv"
 $jsonFile = Join-Path $OutputPath "leaver-execution-log-$timestamp.json"
 
 $logEntries | Export-Csv -Path $logFile -NoTypeInformation -Encoding UTF8
-$logEntries | ConvertTo-Json -Depth 3 | Out-File $jsonFile -Encoding UTF8
+$logEntries | ConvertTo-Json -Depth 5 | Out-File $jsonFile -Encoding UTF8
 
-# ── Summary ───────────────────────────────────────────────────────────────────
+# ── Summary Metrics ──────────────────────────────────────────────────────────
 
 $successCount = ($logEntries | Where-Object { $_.Status -eq "Success" }).Count
-$failedCount  = ($logEntries | Where-Object { $_.Status -eq "Failed" }).Count
+$failedCount = ($logEntries | Where-Object { $_.Status -eq "Failed" }).Count
 $skippedCount = ($logEntries | Where-Object { $_.Status -eq "Skipped" }).Count
-$whatifCount  = ($logEntries | Where-Object { $_.Status -eq "WhatIf" }).Count
+$warningCount = ($logEntries | Where-Object { $_.Status -eq "Warning" }).Count
+$whatIfCount = ($logEntries | Where-Object { $_.Status -eq "WhatIf" }).Count
+$totalDuration = [math]::Round(((Get-Date) - $scriptStartTime).TotalSeconds, 2)
 
-Write-Host "`n[SUMMARY] Leaver Workflow Execution:" -ForegroundColor Yellow
+Write-Host "`n[SUMMARY] Leaver Workflow Execution" -ForegroundColor Yellow
+Write-Host "  Execution ID    : $executionId"
 Write-Host "  Execution mode  : $executionMode"
 Write-Host "  Users processed : $($UserPrincipalName.Count)"
 Write-Host "  Actions success : $successCount" -ForegroundColor Green
 Write-Host "  Actions skipped : $skippedCount" -ForegroundColor Cyan
-Write-Host "  Actions failed  : $failedCount"  -ForegroundColor Red
-if ($whatifCount -gt 0) {
-    Write-Host "  WhatIf previewed: $whatifCount (no changes made)" -ForegroundColor Yellow
-}
+Write-Host "  Actions warning : $warningCount" -ForegroundColor Magenta
+Write-Host "  Actions failed  : $failedCount" -ForegroundColor Red
+Write-Host "  WhatIf previewed: $whatIfCount" -ForegroundColor Yellow
 Write-Host "  Ticket ref      : $TicketReference"
-Write-Host "`n[INFO] Execution log: $logFile"  -ForegroundColor Green
-Write-Host "[INFO] JSON log:       $jsonFile"  -ForegroundColor Green
+Write-Host "  Duration sec    : $totalDuration"
+Write-Host "`n[INFO] CSV log : $logFile" -ForegroundColor Green
+Write-Host "[INFO] JSON log: $jsonFile" -ForegroundColor Green
 
 if ($failedCount -gt 0) {
-    Write-Host "`n[WARNING] $failedCount action(s) failed — review log before closing ticket." -ForegroundColor Red
+    Write-Host "`n[WARNING] Failed actions detected — review logs before closing ticket." -ForegroundColor Red
 }
 
 if ($WhatIfPreference) {
