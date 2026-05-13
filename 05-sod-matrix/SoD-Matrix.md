@@ -1,439 +1,203 @@
-# Segregation of Duties (SoD) Policy
+# SoD Conflict Matrix
 
-**Document ID:** SMG-IAM-POL-005  
+**Document ID:** SMG-IAM-STD-005  
 **Version:** 1.0  
 **Date:** 2026-03-24  
 **Owner:** Robert J. Myers  
-**Scope:** Generic regulated enterprise — CUI / PII / financial data :contentReference[oaicite:0]{index=0}
 
 ---
 
-# Executive Summary
+# Purpose
 
-This policy establishes the Segregation of Duties (SoD) governance framework for regulated enterprise operations.
+This matrix defines prohibited or high-risk role combinations within a regulated enterprise environment.
 
-The objective of SoD governance is to reduce the risk of:
-- fraud
-- privilege abuse
-- unauthorized transactions
+The objective is to reduce:
+- fraud risk
+- privilege escalation
 - audit integrity failure
-- operational control bypass
+- unauthorized operational control
 - excessive concentration of authority
 
-The framework defines prohibited role combinations across:
-- Finance
-- IT Administration
-- Security Operations
-
-and establishes:
-- risk-tier classification
-- mitigation requirements
-- exception governance
-- escalation procedures
-- periodic review requirements
-
-Role assignments are evaluated against the SoD matrix during provisioning, review, and governance workflows.
-
-No user may maintain conflicting roles without an approved and documented exception.
+The matrix supports:
+- NIST 800-53 AC-5
+- CMMC Level 2 access governance requirements
+- least privilege enforcement
+- audit accountability
+- regulated-environment governance workflows
 
 ---
 
-# Control Objective
+# Risk Tier Definitions
 
-Ensure no individual possesses conflicting access rights capable of:
-- bypassing oversight
-- concealing unauthorized activity
-- manipulating audit evidence
-- performing incompatible operational functions
-
-This control supports:
-- least privilege
-- separation of authority
-- fraud prevention
-- operational accountability
-- audit integrity
-- governance traceability
-
----
-
-# 1. Purpose
-
-This policy establishes formal Segregation of Duties governance controls for enterprise identity and access management workflows.
-
-The policy ensures:
-- conflicting role assignments are identified and classified
-- high-risk role combinations are restricted
-- mitigation controls exist for all identified conflicts
-- violations are escalated and remediated
-- temporary exceptions follow formal approval procedures
-- periodic review validates ongoing compliance
-
----
-
-# 2. Scope
-
-| Scope Item | Detail |
-|---|---|
-| Users in scope | Workforce identities with assigned enterprise roles |
-| Systems in scope | IAM, Finance, IT Administration, Security, and operational platforms |
-| Enforcement model | Role conflict evaluation during provisioning and governance review |
-| Governance domains | Finance, IT Administration, Security Operations |
-| Exclusions | Temporary approved exceptions governed through formal exception workflow |
-
----
-
-# 3. Roles and Responsibilities
-
-| Role | Responsibility |
-|---|---|
-| IAM Engineer | Maintains SoD matrix and governance workflows |
-| Security Lead | Reviews high-risk conflicts and exception requests |
-| Compliance Team | Performs governance review and evidence validation |
-| Role Owner | Validates business need for assigned access |
-| Access Reviewer | Performs periodic access certification |
-| CISO / Security Leadership | Approves Critical-tier exceptions |
-
----
-
-# 4. Governance Principles
-
-Segregation of Duties controls are designed to ensure:
-- incompatible functions remain separated
-- no single user can bypass governance controls
-- access assignments remain attributable and reviewable
-- operational oversight exists for sensitive activities
-
-The framework follows three governance principles:
-1. Preventive controls
-2. Detective controls
-3. Corrective controls
-
-All three are required for effective SoD governance.
-
----
-
-# 5. Control Types
-
-| Control Type | Definition | Examples |
+| Tier | Description | Response Requirement |
 |---|---|---|
-| Preventive | Controls designed to stop conflicts before assignment | Role separation, approval workflows, PIM enforcement |
-| Detective | Controls designed to identify conflicts after assignment | Access reviews, audit monitoring, exception review |
-| Corrective | Controls designed to remediate identified conflicts | Role removal, compensating controls, escalation |
+| 🔴 Critical | Direct fraud, privilege escalation, or audit destruction risk | Immediate remediation — exception requires CISO approval |
+| 🟠 High | Significant operational abuse or integrity risk | Remediation within SLA with compensating control |
+| 🟡 Medium | Governance or policy violation risk | Review during governance cycle |
 
 ---
 
-# 6. Risk Tier Definitions
+# Finance Domain Conflicts
 
-| Tier | Label | Definition | Response Requirement |
-|---|---|---|---|
-| 🔴 Critical | Direct fraud, privilege escalation, or audit destruction risk | Immediate remediation — no exception without CISO approval |
-| 🟠 High | Significant abuse, manipulation, or integrity risk | Remediation within defined SLA with compensating control |
-| 🟡 Medium | Governance or policy violation risk | Review and remediation during governance cycle |
-
----
-
-# 7. SoD Governance Domains
-
-## Finance Domain
-
-Controls designed to reduce:
-- payment fraud
-- unauthorized expenditure
-- financial manipulation
-- payroll abuse
-
-Examples include:
-- Accounts Payable vs Vendor Management
-- Payroll Administrator vs HR Records Administrator
-- Budget Owner vs Procurement Approver
+| ID | Role A | Role B | Conflict Description | Risk | Tier | Mitigation |
+|---|---|---|---|---|---|---|
+| FIN-001 | Accounts Payable | Vendor Management | Same user can create vendor and process payment | Fraudulent vendor payments | 🔴 Critical | Separate ownership and dual approval |
+| FIN-002 | Accounts Payable | General Ledger | Same user can post and approve financial activity | Financial manipulation | 🔴 Critical | Independent GL review |
+| FIN-003 | Budget Owner | Procurement Approver | Same user requests and approves purchases | Unauthorized spending | 🟠 High | Approval escalation |
+| FIN-004 | Payroll Administrator | HR Records Administrator | Same user can create employee and process payroll | Ghost employee fraud | 🔴 Critical | Independent HR validation |
+| FIN-005 | Accounts Receivable | Cash Application | Same user records and applies payments | Revenue manipulation | 🟠 High | Reconciliation review |
 
 ---
 
-## IT Administration Domain
+# IT Administration Domain Conflicts
 
-Controls designed to reduce:
-- privilege escalation
-- unauthorized deployment
-- audit bypass
-- identity compromise
-
-Examples include:
-- Global Administrator vs Conditional Access Administrator
-- User Administrator vs Access Reviewer
-- System Administrator vs Audit Log Administrator
+| ID | Role A | Role B | Conflict Description | Risk | Tier | Mitigation |
+|---|---|---|---|---|---|---|
+| IT-001 | Global Administrator | Conditional Access Administrator | User can modify and bypass identity controls | Identity system compromise | 🔴 Critical | PIM eligible-only with approval |
+| IT-002 | User Administrator | Access Reviewer | User can grant and certify own access | Privilege escalation | 🔴 Critical | Independent reviewer required |
+| IT-003 | DevOps Engineer | Production Deploy Approver | User can deploy unreviewed code | Integrity compromise | 🟠 High | CI/CD approval gates |
+| IT-004 | Backup Administrator | Security Administrator | User can alter backups and security controls | Evidence destruction risk | 🟠 High | Separate ownership |
+| IT-005 | System Administrator | Audit Log Administrator | User can alter systems and audit visibility | Undetectable compromise | 🔴 Critical | Immutable logging and separation |
 
 ---
 
-## Security Domain
+# Security Domain Conflicts
 
-Controls designed to reduce:
-- evidence manipulation
-- false compliance reporting
-- governance bypass
-- investigation integrity failure
-
-Examples include:
-- Security Administrator vs Audit Log Administrator
-- Incident Responder vs Evidence Custodian
-- Risk Analyst vs Control Owner
+| ID | Role A | Role B | Conflict Description | Risk | Tier | Mitigation |
+|---|---|---|---|---|---|---|
+| SEC-001 | Security Administrator | Audit Log Administrator | User can generate and alter audit evidence | Audit integrity failure | 🔴 Critical | Separate log management |
+| SEC-002 | Incident Responder | Forensic Evidence Custodian | User can investigate and control evidence | Evidence tampering | 🟠 High | Chain-of-custody controls |
+| SEC-003 | Risk Analyst | Control Owner | User can assess and approve own controls | False compliance reporting | 🟠 High | Independent assessment |
+| SEC-004 | Compliance Officer | System Administrator | User can define policy and implement controls | Governance bypass | 🟠 High | Governance separation |
+| SEC-005 | Security Reviewer | Access Approver | User can validate and approve same request | Control bypass | 🟡 Medium | Dual-review workflow |
 
 ---
 
-# 8. Role Ownership
+# Preventive Controls
 
-Each governed role must have:
-- documented business owner
-- defined approval authority
-- periodic review cadence
-- classification within the SoD matrix
-
-Role owners are responsible for:
-- validating business need
-- reviewing role assignments
-- participating in access certification
-- ensuring ongoing compliance with SoD policy requirements
-
----
-
-# 9. Provisioning Governance
-
-Role assignments must be evaluated against the SoD matrix during:
-- onboarding workflows
-- access request workflows
-- role modification events
-- periodic governance review
-
-IAM governance workflows may evaluate proposed assignments against existing conflict pairs before provisioning approval.
-
-Conflicting assignments must:
-- be denied
-- escalated
-- or routed through formal exception procedures
-
----
-
-# 10. Violation Detection and Response Workflow
-
-## Detection
-
-Violations may be identified through:
-- periodic access reviews
-- IAM governance workflows
-- audit log review
-- provisioning validation
-- compliance assessment activities
-
----
-
-## Classification
-
-Conflicts are evaluated using:
-- fraud exposure
-- privilege escalation potential
-- audit integrity impact
-- operational risk severity
-
----
-
-## Escalation
-
-| Tier | Escalation Requirement |
+| Control | Purpose |
 |---|---|
-| 🔴 Critical | Immediate escalation to Security and Compliance leadership |
-| 🟠 High | Review within defined SLA |
-| 🟡 Medium | Included in periodic governance review |
+| Role separation | Prevent conflicting role assignment |
+| PIM eligible-only access | Reduce standing privileged access |
+| Dual approval workflows | Require independent authorization |
+| Provisioning validation | Detect conflicts before activation |
+| CI/CD approval gates | Prevent self-approved deployment |
 
 ---
 
-## Remediation
+# Detective Controls
 
-Remediation actions may include:
-- removal of conflicting role
-- temporary compensating control
-- access restriction
-- enhanced monitoring
-- formal exception review
-
----
-
-## Validation
-
-After remediation:
-- conflict resolution is verified
-- evidence is retained
-- governance records are updated
-- review outcomes are logged
+| Control | Purpose |
+|---|---|
+| Quarterly access reviews | Detect accumulated conflicts |
+| IAM conflict scans | Identify unauthorized overlap |
+| Exception register review | Validate approved exceptions |
+| Audit log monitoring | Detect suspicious activity patterns |
+| Governance reporting | Track unresolved conflicts |
 
 ---
 
-# 11. Exception Governance
+# Corrective Controls
 
-Temporary SoD conflicts may be approved when:
+| Control | Purpose |
+|---|---|
+| Role removal | Eliminate identified conflict |
+| Temporary compensating controls | Reduce residual risk |
+| Approval escalation | Increase oversight |
+| Enhanced monitoring | Detect abuse indicators |
+| Exception expiration enforcement | Prevent unmanaged long-term exceptions |
+
+---
+
+# Temporary Exception Governance
+
+Temporary SoD conflicts may be approved only when:
 - operational continuity requires temporary overlap
 - staffing limitations exist
 - emergency operational conditions occur
 
 All exceptions require:
 - documented business justification
-- risk assessment
 - compensating controls
 - expiration date
 - formal approval
+- quarterly review
 
-Permanent exceptions require formal risk acceptance.
-
----
-
-# 12. Exception Workflow
-
-| Step | Action | Owner | Timeframe |
-|---|---|---|---|
-| 1 | Submit exception request with business justification | Role Owner | Immediately upon detection |
-| 2 | Perform risk assessment | Security Lead | Within 2 business days |
-| 3 | Approve or deny exception | CISO / Security Lead | Within 3 business days |
-| 4 | Document compensating controls | IAM Engineer | Before activation |
-| 5 | Define expiration date (maximum 90 days) | Compliance | During approval |
-| 6 | Review at next certification cycle | Access Reviewer | Quarterly |
+Maximum exception duration:
+- 90 days unless formally renewed
 
 ---
 
-# 13. Enforcement Controls
+# Exception Approval Requirements
 
-- Conflicting role assignments prohibited unless formally approved
-- Role assignments reviewed against SoD matrix
-- High-risk conflicts escalated immediately
-- Quarterly governance review required
-- Exception register maintained and reviewed
-- Governance evidence retained for audit purposes
-
----
-
-# 14. Monitoring and Review
-
-| Activity | Frequency |
+| Tier | Approval Authority |
 |---|---|
-| SoD matrix review | Quarterly |
-| Access certification review | Quarterly |
-| Exception register review | Quarterly |
-| Critical conflict review | Immediate |
-| Governance reporting | Quarterly |
+| 🔴 Critical | CISO |
+| 🟠 High | Security Lead |
+| 🟡 Medium | Governance Review |
 
 ---
 
-# 15. Logging and Auditability
+# Provisioning Governance Workflow
 
-| Event | Implementation |
+| Step | Action |
 |---|---|
-| Role assignment changes | Logged through IAM workflows |
-| SoD violations | Recorded and tracked |
-| Exception approvals | Documented with approver and expiration |
-| Access reviews | Retained for governance evidence |
-| Remediation outcomes | Logged and validated |
+| 1 | User role assignment requested |
+| 2 | IAM workflow evaluates requested roles against SoD matrix |
+| 3 | Conflict identified and classified |
+| 4 | Assignment blocked or escalated |
+| 5 | Exception workflow initiated if required |
+| 6 | Governance evidence retained |
 
 ---
 
-# 16. Design Considerations & Limitations
+# Quarterly Governance Review
 
-| Consideration | Detail |
+Quarterly review validates:
+- no unresolved Critical conflicts exist
+- all exceptions remain approved and documented
+- compensating controls remain active
+- expired exceptions are remediated
+- SoD matrix remains aligned to current role model
+
+---
+
+# Metrics
+
+| Metric | Target |
 |---|---|
-| Temporary operational overlap | Certain business conditions may require controlled exceptions |
-| Shared responsibilities | Cross-functional roles increase governance complexity |
-| Role granularity | Broad role definitions increase conflict exposure |
-| Manual review dependency | Governance quality depends on review discipline |
-| IAM maturity | Automated detection effectiveness depends on IAM integration maturity |
+| Open Critical conflicts | Zero |
+| Exceptions without compensating controls | Zero |
+| Expired exceptions | Zero |
+| Quarterly review completion | 100% |
+| Unreviewed privileged conflicts | Zero |
 
 ---
 
-# 17. Control Mapping
+# Governance Alignment
 
-| Control | Description | Implementation |
-|---|---|---|
-| AC-2 | Account Management | Role assignments reviewed against SoD matrix |
-| AC-3 | Access Enforcement | Conflicting assignments restricted |
-| AC-5 | Separation of Duties | Formal SoD matrix defines prohibited role combinations |
-| AC-6 | Least Privilege | Access scoped and evaluated for conflict exposure |
-| AU-2 | Audit Events | Violations and exceptions logged |
-| AU-9 | Protection of Audit Information | Audit roles separated from operational administration |
-| CA-7 | Continuous Monitoring | Periodic review validates ongoing governance effectiveness |
+This matrix supports:
+- NIST SP 800-53 Rev 5
+- NIST SP 800-171
+- CMMC Level 2
+- SOC 2 Type II (CC6)
+- Zero Trust least privilege principles
 
 ---
 
-# 18. Risk Reduction Summary
+# Assessment Narrative
 
-| Risk Condition | Mitigation |
-|---|---|
-| Fraudulent transactions | Role separation and approval workflows |
-| Privilege escalation | Conflicting administrative roles restricted |
-| Audit evidence manipulation | Audit administration segregated from operations |
-| Unauthorized expenditure | Financial approval separation |
-| Governance bypass | Independent review and exception approval |
-
----
-
-# 19. Control Validation
-
-Control effectiveness is validated through:
-- periodic access certification
-- governance review
-- conflict remediation tracking
-- exception register review
-- IAM workflow validation
-- audit evidence review
-
-Evidence artifacts include:
-- SoD conflict matrix
-- governance workflows
-- exception records
-- review evidence
-- remediation documentation
-
----
-
-# 20. Assessment Narrative
-
-This implementation establishes a formal Segregation of Duties governance framework designed to reduce fraud, privilege abuse, audit integrity failure, and operational control risk.
+This SoD matrix establishes a formal governance framework designed to reduce fraud, privilege abuse, audit manipulation, and excessive concentration of authority.
 
 Conflicts are:
 - explicitly defined
-- classified by risk tier
-- paired with mitigation strategies
-- governed through structured workflows
-- monitored through periodic review
+- risk-tiered
+- paired with mitigation controls
+- reviewed continuously
+- governed through documented exception workflows
 
-Role assignments are evaluated against the SoD matrix during provisioning and governance review activities. Violations are escalated and remediated through documented operational procedures.
-
-This workflow supports:
-- NIST 800-53 AC-5
-- least privilege governance
-- audit accountability
-- regulated-environment access governance objectives
+This structure supports operational IAM governance maturity and regulated-environment access control requirements.
 
 ---
 
-# 21. Review and Maintenance
-
-- Policy reviewed annually or after significant organizational changes
-- New enterprise roles evaluated against SoD matrix prior to provisioning
-- Exception register reviewed quarterly
-- Version history maintained within GitHub repository
-- Next scheduled review: March 2027
-
----
-
-# 22. Governance Principle
-
-No single individual should possess sufficient authority to:
-- initiate
-- approve
-- execute
-- conceal
-
-a sensitive operational activity without independent oversight or review.
-
-Segregation of Duties is treated as an operational governance control rather than a compliance-only requirement.
-
----
-
-*This portfolio demonstrates governance concepts, operational workflows, and identity security practices within a controlled lab environment aligned to regulated IAM operations.*
-
-**SMG-IAM-POL-005 · Segregation of Duties Policy · v1.0 · Internal**
+*SMG-IAM-STD-005 · SoD Conflict Matrix · v1.0 · Internal*
