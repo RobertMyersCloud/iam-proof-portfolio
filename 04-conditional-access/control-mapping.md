@@ -1,114 +1,173 @@
 # Control Mapping — Conditional Access Pack
 
-This mapping demonstrates how the Conditional Access implementation in Microsoft Entra ID aligns to NIST 800-53 Rev 5 and CMMC Level 2 requirements, with direct evidence linkage to policy configuration and evaluation artifacts.
+This mapping demonstrates how the Conditional Access implementation within Microsoft Entra ID aligns to NIST 800-53 Rev 5 and CMMC Level 2 requirements, with direct evidence linkage to policy configuration, policy evaluation workflows, and operational governance artifacts. :contentReference[oaicite:0]{index=0}
 
-## NIST 800-53 / CMMC Level 2 Mapping
+---
+
+# NIST 800-53 / CMMC Level 2 Mapping
 
 | Control | Family | Description | Implementation | Evidence |
 |---|---|---|---|---|
-| AC-2 | Access Control | Account Management | Conditional Access policies scoped to all user accounts — no exceptions outside documented break-glass exclusions | CA-STEP-01, CA-STEP-05 |
-| AC-3 | Access Enforcement | Access Enforcement | All access decisions enforced through policy evaluation at every authentication event — not network perimeter | CA-STEP-02, CA-STEP-06 |
-| AC-17 | Access Control | Remote Access | Location-based policy controls and restricts access from outside defined trusted geographic region | CA-STEP-03, CA-STEP-04 |
-| AC-17(2) | Access Control | Remote Access — Protection of Confidentiality and Integrity | MFA enforcement protects all remote access sessions regardless of originating network | CA-STEP-02 |
-| IA-2 | Identification & Authentication | Identification and Authentication | MFA required and enforced for all cloud application sign-ins — no single-factor authentication path | CA-STEP-02, CA-STEP-06 |
-| IA-2(1) | Identification & Authentication | Network Access to Privileged Accounts | MFA enforced across all access paths — browser and modern authentication clients | CA-STEP-02 |
-| IA-2(11) | Identification & Authentication | Remote Access — Separate Device | Location-based policy addresses remote access risk through geographic enforcement | CA-STEP-03, CA-STEP-04 |
-| IA-2(12) | Identification & Authentication | Acceptance of PIV Credentials | MFA enforcement framework supports phishing-resistant authentication path extension | CA-STEP-02 |
-| SI-4 | System and Information Integrity | System Monitoring | Report-only mode captures sign-in evaluation data for continuous monitoring and policy impact analysis | CA-STEP-06 |
+| AC-2 | Access Control | Account Management | Conditional Access policies broadly scoped across workforce identities with documented emergency access exclusions | CA-STEP-01, CA-STEP-05 |
+| AC-3 | Access Control | Access Enforcement | Authentication requests evaluated dynamically through Conditional Access policy engine | CA-STEP-02, CA-STEP-06 |
+| AC-17 | Access Control | Remote Access | Geographic access restrictions applied using named locations and location-based policies | CA-STEP-03, CA-STEP-04 |
+| AC-17(2) | Access Control | Protection of Confidentiality and Integrity | MFA enforced for remote access authentication workflows | CA-STEP-02 |
+| IA-2 | Identification & Authentication | Identification and Authentication | MFA enforced for all cloud application sign-ins | CA-STEP-02, CA-STEP-06 |
+| IA-2(1) | Identification & Authentication | Network Access to Privileged Accounts | MFA enforced across authentication pathways and cloud application access | CA-STEP-02 |
+| IA-2(11) | Identification & Authentication | Remote Access — Separate Device | Geographic enforcement supports remote access governance controls | CA-STEP-03, CA-STEP-04 |
+| IA-2(12) | Identification & Authentication | Acceptance of PIV Credentials | MFA enforcement framework supports phishing-resistant authentication expansion | CA-STEP-02 |
+| SI-4 | System & Information Integrity | System Monitoring | Report-only mode captures policy evaluation and sign-in impact data for operational monitoring | CA-STEP-06 |
 
-## CMMC Level 2 Practice Mapping
+---
+
+# CMMC Level 2 Practice Mapping
 
 | Practice | Domain | Requirement | Implementation |
 |---|---|---|---|
-| AC.L2-3.1.1 | Access Control | Limit system access to authorized users | CA policies enforce access requirements at every authentication event |
-| AC.L2-3.1.2 | Access Control | Limit system access to authorized transactions | Location policy restricts access to authorized geographic regions |
-| AC.L2-3.1.14 | Access Control | Route remote access via managed access control points | Conditional Access acts as centralized enforcement point for all cloud access |
-| AC.L2-3.1.20 | Access Control | Verify and control connections to external systems | Location-based policy controls external access pathways |
-| IA.L2-3.5.3 | Identification & Authentication | Use multifactor authentication | MFA required and enforced for all sign-ins via CA-POL-001 |
-| IA.L2-3.5.4 | Identification & Authentication | Employ replay-resistant authentication | MFA enforcement reduces credential replay risk across all access paths |
-| AU.L2-3.3.1 | Audit & Accountability | Create and retain system audit logs | All sign-in events logged with policy evaluation results |
-| AU.L2-3.3.2 | Audit & Accountability | Ensure audit log actions are traceable | Sign-in logs attribute all policy evaluations to named user with timestamp |
+| AC.L2-3.1.1 | Access Control | Limit system access to authorized users | Conditional Access policies evaluate all authentication requests |
+| AC.L2-3.1.2 | Access Control | Limit system access to authorized transactions and functions | Geographic restrictions applied to authentication workflows |
+| AC.L2-3.1.14 | Access Control | Route remote access via managed access control points | Conditional Access functions as centralized identity enforcement plane |
+| AC.L2-3.1.20 | Access Control | Verify and control connections to external systems | Location-based access governance applied to remote authentication attempts |
+| IA.L2-3.5.3 | Identification & Authentication | Use multifactor authentication | MFA required for all cloud application sign-ins |
+| IA.L2-3.5.4 | Identification & Authentication | Employ replay-resistant authentication | MFA reduces credential replay exposure |
+| AU.L2-3.3.1 | Audit & Accountability | Create and retain system audit logs | Sign-in logs capture Conditional Access policy evaluation activity |
+| AU.L2-3.3.2 | Audit & Accountability | Ensure audit log actions are traceable | Authentication events attributable to named user identities and timestamps |
 
-## Evidence Reference
+---
 
-| Evidence File | Controls Satisfied |
+# Evidence Reference
+
+| Evidence File | Controls Supported |
 |---|---|
-| CA-STEP-01-mfa-policy-config.png | Demonstrates policy list showing CA-POL-001 active — AC-2, AC-3, IA-2 |
-| CA-STEP-02-mfa-policy-detail.png | Demonstrates MFA policy configuration — all users, all resources, Require MFA grant — IA-2, IA-2(1), AC-3 |
-| CA-STEP-03-named-location.png | Demonstrates named location definition — Trusted United States — AC-17, IA-2(11) |
-| CA-STEP-04-block-policy.png | Demonstrates location block policy — non-US access blocked — AC-17, AC-17(2), AC-3 |
-| CA-STEP-05-policies-complete.png | Demonstrates both policies active and configured — AC-2, AC-3, IA-2 |
-| CA-STEP-06-what-if-results.png | Demonstrates policy evaluation — CA-POL-001 applies MFA to test scenario — IA-2, AC-3, SI-4 |
+| CA-STEP-01-mfa-policy-config.png | MFA policy deployment and policy state visibility — AC-2, AC-3, IA-2 |
+| CA-STEP-02-mfa-policy-detail.png | MFA policy scope and grant control configuration — IA-2, IA-2(1), AC-3 |
+| CA-STEP-03-named-location.png | Trusted geographic location definition — AC-17, IA-2(11) |
+| CA-STEP-04-block-policy.png | Geographic access restriction policy configuration — AC-17, AC-17(2), AC-3 |
+| CA-STEP-05-policies-complete.png | Multiple Conditional Access policies active within environment — AC-2, AC-3, IA-2 |
+| CA-STEP-06-what-if-results.png | What If evaluation validating MFA policy application logic — IA-2, AC-3, SI-4 |
 
-## Control Chain Summary
+---
 
-| Step | Action | Control Satisfied |
+# Control Chain Summary
+
+| Step | Action | Controls Supported |
 |---|---|---|
-| 1 | Named location defined — Trusted United States | AC-17, IA-2(11) |
-| 2 | MFA policy created — all users, all cloud apps | IA-2, IA-2(1), AC-3 |
-| 3 | Location block policy created — non-US access blocked | AC-17, AC-17(2) |
-| 4 | Policies deployed in Report-only — impact assessment before enforcement | SI-4 |
-| 5 | What If evaluation confirms MFA policy applies to target scenario | IA-2, AC-3, SI-4 |
-
-## Assessment Narrative
-
-The Conditional Access implementation establishes a centralized identity enforcement plane where all access decisions are evaluated dynamically at authentication time. Implicit trust is eliminated — network location alone does not grant access.
-
-Two baseline policies enforce MFA for all users across all cloud applications and block access from outside the defined trusted geographic region. Policies are deployed in Report-only mode following professional change management practice, with the What If tool confirming policy logic before enforcement is enabled.
-
-Evidence demonstrates policy configuration, named location definition, and validated evaluation results. The What If evaluation confirms that CA-POL-001 correctly applies MFA requirements to the test user scenario — validating that the enforcement logic functions as designed.
-
-This establishes a defensible Conditional Access implementation aligned to NIST 800-53 and CMMC Level 2 requirements.
-
-## Control Effectiveness Statement
-
-The implementation demonstrates that all cloud resource access is subject to policy evaluation at authentication time, MFA is required without exception, and geographic access controls restrict sign-ins from untrusted regions.
-
-Report-only mode deployment confirms the policies are active and evaluating sign-ins. The What If tool result confirms correct policy application. Sign-in logs provide ongoing evidence of policy enforcement.
-
-This confirms that the controls are functioning as designed and effectively reducing the risk of unauthorized access through credential-based and location-based attack vectors.
+| 1 | Trusted geographic location configured | AC-17, IA-2(11) |
+| 2 | MFA policy created for all users and cloud applications | IA-2, IA-2(1), AC-3 |
+| 3 | Geographic restriction policy configured | AC-17, AC-17(2) |
+| 4 | Policies deployed in report-only mode for validation | SI-4 |
+| 5 | What If evaluation confirms MFA enforcement logic | IA-2, AC-3, SI-4 |
 
 ---
 
-*Mapping reference: NIST SP 800-53 Rev 5 · CMMC Level 2 (32 CFR Part 170) · NIST SP 800-171 Rev 2*
+# Assessment Narrative
 
-## Control Testing Methodology
+This Conditional Access implementation establishes centralized identity-based access enforcement where authentication requests are evaluated dynamically using identity, location, and authentication strength conditions.
 
-Control effectiveness is validated using the following testing approach:
+The design supports Zero Trust governance principles by removing implicit trust and requiring verification during authentication workflows.
 
-**Design Validation**
-- Review policy configuration against control requirements
-- Confirm scope includes all users and applications without unintended exclusions
-- Verify named locations are correctly defined and referenced in policies
+Baseline policies enforce:
+- MFA across cloud applications
+- geographic access restrictions
+- centralized identity enforcement
 
-**Operational Testing**
-- Execute What If scenarios to simulate authentication events under multiple conditions
-- Validate MFA enforcement across user types, locations, and application targets
-- Confirm location block policy applies to non-trusted geographic regions
+Policies are initially deployed in report-only mode following staged change management practices. What If evaluation testing validates policy logic before enforcement activation.
 
-**Evidence Review**
-- Analyze sign-in logs for policy evaluation results in Report-only mode
-- Confirm Report-only impact aligns with expected enforcement behavior before enabling
-- Verify all sign-in events are captured with policy evaluation detail
+Evidence demonstrates:
+- Conditional Access policy configuration
+- named location governance
+- report-only deployment practices
+- policy evaluation validation
+- centralized authentication enforcement concepts
 
-**Negative Testing**
-- Simulate non-compliant conditions — non-US sign-in, single-factor authentication attempt
-- Confirm policy would block or require additional authentication in each scenario
-- Validate break-glass exclusions do not create unintended access gaps
-
-**Continuous Monitoring**
-- Review sign-in logs for anomalies or unexpected policy behavior
-- Monitor for failed MFA attempts and blocked access patterns
-- Tune policies based on observed results and changing threat signals
-- Quarterly review of policy effectiveness metrics aligned to governance cadence
+This workflow supports identity governance, MFA enforcement, remote access governance, and regulated-environment access control objectives.
 
 ---
 
-## Related framework alignment
+# Control Effectiveness Statement
 
-The NIST 800-53 controls mapped above correspond directly to the following additional frameworks. This pack's controls satisfy equivalent requirements in each:
+The implementation demonstrates that:
+- authentication requests are evaluated through Conditional Access policy logic
+- MFA enforcement applies across cloud application access
+- geographic restrictions are evaluated dynamically during authentication
+- report-only deployment enables staged validation prior to enforcement
+- sign-in logs provide traceable policy evaluation records
 
-- **NIST SP 800-171 (Rev. 3)** — DFARS 252.204-7012 / CMMC Level 2 baseline; 3.1.x (Access Control) and 3.5.x (Identification and Authentication) families applicable
-- **SOC 2 (TSC 2017)** — Common Criteria CC6.1 through CC6.8 (Logical & Physical Access Controls) and CC7.2 (System Monitoring) applicable
+The What If evaluation confirms policy application logic functions as designed and supports operational validation prior to enforcement rollout.
 
-> **Note on scope:** This appendix identifies cross-framework applicability. Specific control-ID crosswalks to 800-171 and SOC 2 CC6/CC7 are on the roadmap for a future Evidence Production pack that consolidates cross-framework traceability.
+---
+
+# Control Testing Methodology
+
+## Design Validation
+
+- Review Conditional Access configuration against governance requirements
+- Validate user and application scope assignments
+- Verify named location configuration and policy references
+- Confirm break-glass exclusions are maintained
+
+---
+
+## Operational Testing
+
+- Execute What If evaluation scenarios across multiple access conditions
+- Validate MFA enforcement logic
+- Confirm geographic restriction policy behavior
+- Review report-only evaluation results before enforcement transition
+
+---
+
+## Evidence Review
+
+- Analyze sign-in logs for policy evaluation outcomes
+- Confirm policy impact aligns with intended behavior
+- Validate authentication events include policy evaluation details
+- Verify policy state and deployment configuration
+
+---
+
+## Negative Testing
+
+- Simulate authentication attempts from non-trusted locations
+- Simulate password-only authentication scenarios
+- Validate expected MFA or block behavior
+- Confirm break-glass exclusions function appropriately
+
+---
+
+## Continuous Monitoring
+
+- Review sign-in logs for anomalies and unexpected policy behavior
+- Monitor MFA failure trends and blocked authentication attempts
+- Tune policies based on operational observations and threat conditions
+- Perform quarterly review of Conditional Access governance effectiveness
+
+---
+
+# Mapping References
+
+- NIST SP 800-53 Rev 5
+- NIST SP 800-171 Rev 2
+- CMMC Level 2 (32 CFR Part 170)
+
+---
+
+# Related Framework Alignment
+
+The controls mapped above support governance concepts commonly associated with additional regulated-environment frameworks including:
+
+- NIST SP 800-171 Rev 2 — Access Control and Identification & Authentication requirements
+- SOC 2 Type II (TSC 2017) — Logical access control and monitoring concepts
+- CISA Zero Trust Maturity Model — centralized identity enforcement and continuous verification principles
+
+---
+
+# Scope Note
+
+This appendix demonstrates Conditional Access governance workflows within a controlled IAM lab environment.
+
+Expanded cross-framework mappings and consolidated evidence traceability are planned for future governance and evidence-production packs.
+
+---
+
+*This portfolio demonstrates governance concepts, operational workflows, and identity security practices within a controlled lab environment aligned to regulated IAM operations.*
