@@ -1,54 +1,79 @@
 # Privileged Access Management Policy
 
-**Document ID:** SMG-IAM-POL-003
-**Version:** 1.0
-**Date:** 2026-03-24
-**Owner:** Robert J. Myers
+**Document ID:** SMG-IAM-POL-003  
+**Version:** 1.0  
+**Date:** 2026-03-24  
+**Owner:** Robert J. Myers  
 
 ---
 
-## Executive Summary
+# Executive Summary
 
-This policy defines the privileged access management program for administrative roles in Microsoft Entra ID. It establishes just-in-time activation controls, MFA enforcement, approval workflows, and time-limited access duration to eliminate standing administrative privileges and produce audit-ready evidence for compliance assessments.
+This policy defines the privileged access management program for Microsoft Entra ID administrative roles using Privileged Identity Management (PIM).
 
-Standing privileged access presents a high-risk condition due to potential misuse, credential theft, lateral movement, and lack of accountability. This policy addresses that risk by ensuring privileged access is never permanently assigned and always requires a documented, approved, time-limited activation.
+The program establishes just-in-time privileged access controls including MFA enforcement, approval workflows, documented justification, and time-limited activation to reduce standing administrative access risk and support audit traceability within regulated environments.
 
----
+Standing privileged access increases exposure to:
+- credential theft
+- privilege escalation
+- unauthorized administrative activity
+- reduced accountability
+- lateral movement risk
 
-## Control Objective
-
-Ensure that privileged access to systems and administrative roles is granted only when required, only for the minimum duration necessary, only with documented justification, and only after approval — with all events recorded and auditable.
-
-This control supports enforcement of least privilege, separation of duties, and continuous monitoring of privileged identity activity.
-
----
-
-## 1. Purpose
-
-This policy establishes privileged access management controls for Microsoft Entra ID administrative roles using Privileged Identity Management (PIM). It ensures:
-
-- No standing administrative access exists for in-scope roles
-- All privileged access requires just-in-time activation
-- Activation requires MFA, documented justification, and approval
-- Access is time-limited and expires automatically
-- All events are captured in an auditable log
+This policy addresses those risks by ensuring privileged access is:
+- temporary
+- approved
+- attributable
+- monitored
+- auditable
 
 ---
 
-## 2. Scope
+# Control Objective
+
+Ensure privileged access is granted:
+- only when required
+- only for the minimum duration necessary
+- only with documented business justification
+- only after approval
+- with all actions logged and traceable
+
+This policy supports:
+- least privilege enforcement
+- separation of duties
+- privileged access accountability
+- continuous monitoring of administrative activity
+
+---
+
+# 1. Purpose
+
+This policy establishes privileged access governance controls for Microsoft Entra ID administrative roles using Privileged Identity Management (PIM).
+
+The policy ensures:
+- No standing administrative access exists for in-scope privileged roles
+- Privileged access requires just-in-time activation
+- MFA is enforced for every activation
+- Activation requests require documented justification
+- Privileged access is time-limited and expires automatically
+- All privileged access activity is logged and auditable
+
+---
+
+# 2. Scope
 
 | Scope Item | Detail |
 |---|---|
-| Roles in scope | All Microsoft Entra ID administrative roles managed through PIM |
-| Assignment model | Eligible only — no permanent active assignments for in-scope roles |
-| Activation requirements | MFA + justification + approval for all activations |
-| Exclusions | Break-glass emergency accounts (covered under separate procedure) |
+| Roles in scope | Microsoft Entra ID administrative roles managed through PIM |
+| Assignment model | Eligible assignment only — no permanent active assignments |
+| Activation requirements | MFA + justification + approval |
+| Exclusions | Break-glass emergency accounts managed under separate procedures |
 
 ---
 
-## 3. Role Tiers and Activation Requirements
+# 3. Role Tiers and Activation Requirements
 
-| Role Tier | Examples | MFA | Justification | Approval | Max Duration |
+| Role Tier | Example Roles | MFA | Justification | Approval | Maximum Duration |
 |---|---|---|---|---|---|
 | Tier 0 — Critical | Global Administrator | Required | Required | Required | 2 hours |
 | Tier 1 — High | Security Administrator, User Administrator | Required | Required | Required | 4 hours |
@@ -56,207 +81,231 @@ This policy establishes privileged access management controls for Microsoft Entr
 
 ---
 
-## 4. Roles and Responsibilities
+# 4. Roles and Responsibilities
 
 | Role | Responsibility |
 |---|---|
 | PIM Owner | Configures role settings, manages eligible assignments, reviews audit logs |
-| Approver | Reviews activation requests, approves or denies based on documented justification |
-| Eligible User | Submits activation request with business justification, completes MFA |
-| Security Team | Reviews PIM audit logs, monitors for anomalous activation patterns |
+| Approver | Reviews activation requests and validates business justification |
+| Eligible User | Requests activation, provides justification, completes MFA |
+| Security Team | Monitors audit logs and reviews privileged access activity |
 
 ---
 
-## 5. Activation Process
+# 5. Activation Workflow
 
-**Trigger:** Eligible user requires privileged access to perform an administrative task.
+**Trigger:**  
+An eligible user requires privileged access to perform an authorized administrative task.
 
-**Workflow:**
-- User navigates to PIM My roles and selects eligible role
-- User enters business justification and selects duration (within maximum)
-- User completes MFA challenge
-- Activation request routed to designated approver
-- Approver reviews justification and approves or denies
-- If approved — role activated for specified duration, access expires automatically
-- If denied — user notified, no access granted
-- All events captured in PIM Resource audit log
+## Workflow
 
-**Justification requirements:**
+1. User selects eligible role within PIM
+2. User enters documented business justification
+3. User selects activation duration within approved maximum
+4. User completes MFA challenge
+5. Activation request routes to designated approver
+6. Approver reviews and approves or denies request
+7. If approved, privileged access activates temporarily
+8. Access expires automatically at duration end
+9. All events are recorded within Microsoft Entra ID audit logs
+
+---
+
+# Justification Standards
 
 | Quality | Example |
 |---|---|
-| Acceptable | "Security investigation — requires read access to audit logs for incident IR-2026-042" |
-| Acceptable | "Quarterly user access review — requires Security Reader for 4 hours" |
-| Not acceptable | "Need access" |
-| Not acceptable | "Admin work" |
+| Acceptable | "Security investigation requiring Security Reader access for incident review" |
+| Acceptable | "Quarterly audit validation requiring temporary log review access" |
+| Not Acceptable | "Need access" |
+| Not Acceptable | "Admin work" |
 
 ---
 
-## 6. Approval Requirements
+# 6. Approval Requirements
 
-- All activation requests require approval before access is granted
-- Approvers must be distinct from the requestor — no self-approval
-- Approvers must review justification before approving
-- Approvals must be based on documented business justification — blanket or habitual approvals are prohibited
-- Approvals without review constitute a control failure
-- If no approver responds within defined window, request expires without access being granted
+- All privileged activations require approval before access is granted
+- Self-approval is prohibited
+- Approvers must review documented justification prior to approval
+- Blanket approvals and habitual approvals are prohibited
+- Requests without adequate justification must be denied
+- Requests expire if approval is not completed within the defined response window
 
 ---
 
-## 7. Break-Glass Accounts
+# 7. Break-Glass Accounts
 
-Break-glass emergency accounts are excluded from PIM activation requirements due to their emergency-access nature. They are subject to:
+Break-glass accounts are excluded from standard PIM activation workflows due to emergency operational requirements.
 
-- Separate policy and procedure documentation
-- Strict physical and logical access controls
-- Mandatory immediate alert upon any use
-- Mandatory post-incident review after any use
+These accounts require:
+- Separate governance procedures
+- Restricted physical and logical access controls
+- Immediate alerting upon use
+- Mandatory post-event review
 - Regular credential rotation
 
 ---
 
-## 8. Enforcement Controls
+# 8. Enforcement Controls
 
-- All in-scope roles configured in PIM with activation requirements
-- Eligible assignment model enforced — direct active assignment not permitted for in-scope roles
-- MFA enforcement cannot be bypassed — required on every activation
-- Time-limited access enforced by PIM — no manual extension without new activation request
-- Audit alerts configured for activation requests, approvals, and denials
+- All in-scope privileged roles managed through PIM
+- Eligible assignment model enforced for privileged roles
+- Direct permanent assignment prohibited for in-scope roles
+- MFA enforced on every activation request
+- Time-limited access enforced automatically
+- Audit logging enabled for all privileged access events
 
 ---
 
-## 9. Logging and Monitoring
+# 9. Logging and Monitoring
 
-| Log Event | Implementation |
+| Event | Implementation |
 |---|---|
-| Role setting changes | Captured in PIM Resource audit log |
-| Eligible assignments | Logged with requestor, target, and timestamp |
-| Activation requests | Logged with justification, duration, and requestor |
-| Approval decisions | Logged with approver, decision, and timestamp |
-| Access expiration | Logged automatically when activation duration expires |
-| Retention | Minimum 90-day retention within Entra ID audit log |
+| Role configuration changes | Logged within PIM Resource audit logs |
+| Eligible assignments | Logged with actor and timestamp |
+| Activation requests | Logged with justification and duration |
+| Approval decisions | Logged with approver and decision outcome |
+| Access expiration | Logged automatically upon expiration |
+| Retention | Minimum 90-day retention |
 
 ---
 
-## 10. Control Mapping
+# 10. Control Mapping
 
 | Control | Description | Implementation |
 |---|---|---|
-| AC-2 | Account Management | Eligible assignment model — no standing privileged access |
-| AC-3 | Access Enforcement | Privileged access requires activation workflow — not direct assignment |
-| AC-6 | Least Privilege | Time-limited activation — access expires after defined duration |
-| AC-6(5) | Privileged Accounts | Privileged roles assigned as eligible and activated through controlled workflow — eliminating permanent administrative assignments |
-| IA-2 | Identification & Authentication | MFA required on every activation request |
-| IA-2(1) | Network Access to Privileged Accounts | MFA enforced for all privileged role activations |
-| IA-5 | Authenticator Management | MFA enforced during privileged role activation |
-| AU-2 | Audit Events | All PIM events logged with actor, timestamp, and outcome |
+| AC-2 | Account Management | Eligible assignment model eliminates standing privileged access |
+| AC-3 | Access Enforcement | Privileged access requires activation workflow |
+| AC-6 | Least Privilege | Access expires automatically after approved duration |
+| AC-6(5) | Privileged Accounts | Privileged access controlled through eligible assignment and approval workflow |
+| IA-2 | Identification & Authentication | MFA required for every activation |
+| IA-2(1) | Privileged Network Access | MFA enforced specifically for privileged access |
+| IA-5 | Authenticator Management | MFA validated during activation workflow |
+| AU-2 | Audit Events | All privileged access events logged and attributable |
 
 ---
 
-## 11. Risk Reduction Summary
+# 11. Risk Reduction Summary
 
 | Risk Condition | Mitigation |
 |---|---|
-| Standing privileged access misuse | Eligible assignment eliminates permanent admin access |
-| Credential theft enabling persistent admin access | JIT model means stolen credentials cannot be used for standing privilege |
-| Undocumented privileged access | Justification required for every activation |
-| Privilege escalation without oversight | Approval gate ensures human review before access is granted |
-| No audit trail for privileged activity | PIM audit log captures complete activation lifecycle |
+| Standing administrative access | Eligible assignment eliminates permanent access |
+| Credential theft exposure | MFA and approval required before activation |
+| Undocumented privileged access | Justification required for every request |
+| Unauthorized privilege escalation | Approval gate prevents self-elevation |
+| Missing privileged access traceability | Audit logs capture complete activation lifecycle |
 
 ---
 
-## 12. Control Validation
+# 12. Control Validation
 
 Control effectiveness is validated through:
+- Review of PIM audit logs
+- Verification of eligible-only assignments
+- Activation workflow testing
+- Evidence artifact review
+- Quarterly review of privileged access activity
+- Verification that approval is required before activation completes
 
-- PIM Resource audit log review confirming activation requests, approvals, and expirations
-- Evidence artifacts captured for each activation lifecycle phase (PIM-STEP-01 through PIM-STEP-07)
-- Verification that no permanent active assignments exist for in-scope roles
-- Periodic review of eligible assignments to confirm continued business need
-- Quarterly review of PIM audit logs for anomalous activation patterns
-
----
-
-## 13. Assumptions
-
-- Microsoft Entra ID P2 license is active — required for Privileged Identity Management
-- All administrative roles are managed through PIM — direct active assignment not used
-- Approvers are available and responsive within the defined approval window
-- Break-glass accounts are documented and managed under separate procedure
+Evidence artifacts include:
+- PIM-STEP-01 through PIM-STEP-07
 
 ---
 
-## 14. Evidence Requirements
+# 13. Assumptions
 
-Each activation cycle must produce the following evidence:
-
-- Role configuration showing activation requirements (MFA, justification, approval)
-- Eligible assignment record for the requesting user
-- Activation request with documented justification
-- Approval or denial decision by designated approver
-- PIM audit log entries capturing all events with timestamps
+- Microsoft Entra ID P2 licensing is active
+- Administrative roles are managed through PIM
+- Approvers are available within defined response windows
+- Break-glass accounts are governed separately
 
 ---
 
-## 15. Metrics and Governance
+# 14. Evidence Requirements
 
-The following metrics are tracked:
+Each activation workflow must produce:
+- Role configuration evidence
+- Eligible assignment evidence
+- Activation request with justification
+- Approval or denial evidence
+- Audit log correlation records
 
-- Total activation requests per period
-- Approval rate vs denial rate
-- Average time from request to approval decision
-- Activations without justification (should be zero)
-- Direct active assignments detected (should be zero)
-
-Metrics are reviewed quarterly by IAM and Security leadership.
+Evidence must remain accessible for governance and compliance activities.
 
 ---
 
-## 16. Review and Maintenance
+# 15. Metrics and Governance
 
-- Policy reviewed annually or upon major system or organizational changes
-- Version history maintained in GitHub repository
+Tracked metrics include:
+- Total activation requests
+- Approval vs denial rate
+- Average approval response time
+- Activation requests without justification
+- Detection of direct active assignments
+
+Metrics are reviewed quarterly to evaluate privileged access governance effectiveness and identify operational gaps.
+
+---
+
+# 16. Review and Maintenance
+
+- Policy reviewed annually or after major organizational or technical changes
+- Version history maintained within GitHub repository
 - Next scheduled review: March 2027
 
 ---
 
-## 17. Prohibited Conditions
+# 17. Prohibited Conditions
 
-The following conditions are explicitly prohibited:
+The following conditions are prohibited:
+- Permanent active assignment for in-scope privileged roles
+- Activation without MFA
+- Self-approval of privileged access
+- Approval without justification review
+- Vague or undocumented activation requests
 
-- Permanent active assignment of privileged roles for in-scope accounts
-- Activation of privileged roles without MFA
-- Approval of activation requests without reviewing justification
-- Self-approval of privileged access requests
-- Activation requests with vague or missing justification
-
-Any occurrence of these conditions constitutes a control violation and must be investigated.
-
----
-
-## 18. Control Violations and Detection
-
-Control violations are identified through:
-
-- Detection of direct active role assignments outside PIM
-- Activation requests without justification or with invalid justification
-- Approval patterns indicating lack of reviewer validation
-- Audit log anomalies in activation frequency or duration
-
-All violations are logged, reviewed, and escalated to Security leadership.
+Violations require escalation and review.
 
 ---
 
-## 19. Assessment Narrative
+# 18. Control Violations and Detection
 
-The privileged access management implementation demonstrates elimination of standing administrative access through a just-in-time activation model.
+Violations may include:
+- Direct active assignments outside PIM
+- Missing justification
+- Approval anomalies
+- Excessive activation frequency
+- Abnormal activation durations
 
-Users are assigned eligible roles and must request activation with documented justification, complete MFA, and obtain approval before access is granted. Access is time-limited and automatically expires.
-
-Evidence confirms that privileged access is not available without activation and approval, and all events are recorded in the Entra ID audit log.
-
-This establishes a defensible privileged access control aligned to NIST 800-53 and CMMC Level 2 requirements.
+Detected violations are reviewed and escalated to Security leadership.
 
 ---
 
-*SMG-IAM-POL-003 · Privileged Access Management Policy · v1.0 · 2026-03-24 · Internal*
+# 19. Governance Principle
+
+Privileged access is treated as a controlled governance function rather than a persistent administrative entitlement.
+
+All privileged access must be:
+- temporary
+- attributable
+- approved
+- monitored
+- auditable
+
+---
+
+# 20. Assessment Narrative
+
+This privileged access implementation demonstrates a just-in-time administrative access model using Microsoft Entra ID Privileged Identity Management.
+
+Users receive eligible assignments rather than permanent administrative access. Activation requires MFA, documented business justification, approval, and time-limited duration enforcement.
+
+Evidence demonstrates that privileged access is not granted without workflow enforcement and that all events remain traceable through audit logging.
+
+This workflow supports least privilege, privileged access accountability, and regulated-environment governance objectives.
+
+---
+
+*This portfolio demonstrates governance concepts, operational workflows, and identity security practices within a controlled lab environment aligned to regulated IAM operations.*
+
+**SMG-IAM-POL-003 · Privileged Access Management Policy · v1.0 · Internal**
