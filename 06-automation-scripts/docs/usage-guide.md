@@ -1,20 +1,46 @@
 # Usage Guide — IAM Automation Scripts
 
-## Prerequisites
+This guide provides installation requirements, execution procedures, operational safeguards, and governance usage guidance for the IAM automation framework. :contentReference[oaicite:0]{index=0}
 
-### PowerShell Version
-PowerShell 7.0 or later recommended. Windows PowerShell 5.1 is supported but
-Microsoft Graph module performance is better on PowerShell 7.
+The automation workflows are designed to support:
+- IAM governance operations
+- audit evidence production
+- lifecycle enforcement
+- privileged access validation
+- Conditional Access posture verification
+- continuous identity monitoring
+
+---
+
+# Prerequisites
+
+## PowerShell Version
+
+PowerShell 7.0 or later is recommended.
+
+Windows PowerShell 5.1 is supported, but Microsoft Graph module performance and compatibility are improved on PowerShell 7.
+
+Verify version:
+
 ```powershell
 $PSVersionTable.PSVersion
 ```
 
-### Module Installation
-```powershell
-# Install Microsoft Graph (all modules)
-Install-Module Microsoft.Graph -Scope CurrentUser
+---
 
-# Or install individual modules only
+# Module Installation
+
+## Install Full Microsoft Graph SDK
+
+```powershell
+Install-Module Microsoft.Graph -Scope CurrentUser
+```
+
+---
+
+## Install Individual Modules Only
+
+```powershell
 Install-Module Microsoft.Graph.Users -Scope CurrentUser
 Install-Module Microsoft.Graph.Groups -Scope CurrentUser
 Install-Module Microsoft.Graph.Identity.Governance -Scope CurrentUser
@@ -22,7 +48,9 @@ Install-Module Microsoft.Graph.Identity.SignIns -Scope CurrentUser
 Install-Module Microsoft.Graph.Reports -Scope CurrentUser
 ```
 
-### Required Permissions
+---
+
+# Required Permissions
 
 | Script | Required Permissions |
 |---|---|
@@ -32,197 +60,515 @@ Install-Module Microsoft.Graph.Reports -Scope CurrentUser
 | Get-ConditionalAccessPolicies | Policy.Read.All |
 | Disable-EntraLeaverAccount | User.ReadWrite.All, GroupMember.ReadWrite.All, RoleManagement.ReadWrite.Directory |
 
-Assign permissions to a service principal or use delegated access with a licensed admin account.
+Use:
+- delegated administrative access
+- or scoped service principals
+
+where possible.
+
+Avoid unnecessary Global Administrator usage.
 
 ---
 
-## Execution Model
+# Governance Execution Model
 
-The scripts are designed to support both audit evidence generation and operational IAM workflows:
+The automation workflows support both:
+- governance evidence generation
+- operational IAM enforcement
 
-- **Read-only scripts** (Get-GroupMembership, Get-StaleUsers, Get-PIMEligibleAssignments, Get-ConditionalAccessPolicies)
-  → Used for access reviews, compliance assessments, and control validation
+## Read-Only Governance Workflows
 
-- **Execution scripts** (Disable-EntraLeaverAccount)
-  → Used for controlled lifecycle enforcement with full audit logging
+The following workflows are non-destructive:
 
-Typical usage pattern:
+- Get-GroupMembership
+- Get-StaleUsers
+- Get-PIMEligibleAssignments
+- Get-ConditionalAccessPolicies
 
-1. Run read-only scripts to identify risk and produce evidence
-2. Review results and validate findings
-3. Execute remediation using controlled, logged actions
+Primary uses:
+- access reviews
+- governance reporting
+- compliance assessments
+- risk identification
+- control validation
+
+---
+
+## Enforcement Workflow
+
+The following workflow performs remediation actions:
+
+- Disable-EntraLeaverAccount
+
+Primary uses:
+- offboarding
+- lifecycle remediation
+- session revocation
+- access removal
+
+---
+
+# Standard IAM Governance Workflow
+
+Typical governance execution flow:
+
+```text
+Detect → Validate → Remediate → Evidence
+```
+
+1. Execute read-only governance workflows
+2. Review findings and validate risk conditions
+3. Execute controlled remediation actions
 4. Archive outputs as audit evidence
 
-This ensures a closed-loop IAM control process: **detect → validate → remediate → evidence**
+This establishes a closed-loop IAM governance process supporting:
+- continuous monitoring
+- lifecycle accountability
+- audit readiness
+- identity risk reduction
 
 ---
 
-## Script Usage Reference
+# Script Usage Reference
 
-### Get-GroupMembership.ps1
+---
+
+# Get-GroupMembership.ps1
+
+## Export Single Group
+
 ```powershell
-# Export single group
 .\Get-GroupMembership.ps1 -GroupName "Finance-ReadOnly"
+```
 
-# Export all security groups with nested member expansion
+---
+
+## Export All Security Groups with Nested Expansion
+
+```powershell
 .\Get-GroupMembership.ps1 -ExportAll -IncludeTransitive
-
-# Export to specific path
-.\Get-GroupMembership.ps1 -GroupName "Finance-ReadOnly" -OutputPath "C:\AuditEvidence"
 ```
-
-**Key output fields:** GroupName, MemberName, MemberUPN, MemberType, MemberEnabled
 
 ---
 
-### Get-StaleUsers.ps1
+## Export to Specific Path
+
 ```powershell
-# Default 90-day threshold
+.\Get-GroupMembership.ps1 `
+-GroupName "Finance-ReadOnly" `
+-OutputPath "C:\AuditEvidence"
+```
+
+---
+
+## Key Output Fields
+
+| Field | Description |
+|---|---|
+| GroupName | Target group |
+| MemberName | Display name |
+| MemberUPN | User principal name |
+| MemberType | User, Group, Service Principal |
+| MemberEnabled | Account enabled state |
+
+---
+
+# Get-StaleUsers.ps1
+
+## Default 90-Day Threshold
+
+```powershell
 .\Get-StaleUsers.ps1
-
-# 60-day threshold, enabled accounts, stale only
-.\Get-StaleUsers.ps1 -InactiveDays 60 -EnabledOnly -StaleOnly
-
-# Exclude break-glass accounts
-.\Get-StaleUsers.ps1 -ExcludeGroups @("Break-Glass-Accounts") -StaleOnly
 ```
-
-**Key output fields:** DisplayName, UPN, AccountEnabled, IsServiceAccount, DaysSinceLastSignIn, StaleStatus, RiskLevel
 
 ---
 
-### Get-PIMEligibleAssignments.ps1
+## 60-Day Threshold — Enabled Accounts Only
+
 ```powershell
-# Export all eligible assignments
+.\Get-StaleUsers.ps1 `
+-InactiveDays 60 `
+-EnabledOnly `
+-StaleOnly
+```
+
+---
+
+## Exclude Break-Glass Accounts
+
+```powershell
+.\Get-StaleUsers.ps1 `
+-ExcludeGroups @("Break-Glass-Accounts") `
+-StaleOnly
+```
+
+---
+
+## Key Output Fields
+
+| Field | Description |
+|---|---|
+| DisplayName | User display name |
+| UPN | User principal name |
+| AccountEnabled | Enabled state |
+| IsServiceAccount | Service account detection |
+| DaysSinceLastSignIn | Inactivity duration |
+| StaleStatus | Stale or Active |
+| RiskLevel | Governance risk classification |
+
+---
+
+# Get-PIMEligibleAssignments.ps1
+
+## Export All Eligible Assignments
+
+```powershell
 .\Get-PIMEligibleAssignments.ps1
-
-# Filter to specific role
-.\Get-PIMEligibleAssignments.ps1 -RoleName "Security Reader"
-
-# Export only permanent assignments
-.\Get-PIMEligibleAssignments.ps1 -PermanentOnly
 ```
-
-**Key output fields:** PrincipalName, PrincipalUPN, RoleName, ActivationModel, IsPermanent, DaysEligible, RiskLevel, MultiRoleEligible
 
 ---
 
-### Get-ConditionalAccessPolicies.ps1
+## Filter to Specific Role
+
 ```powershell
-# Export all policies
+.\Get-PIMEligibleAssignments.ps1 `
+-RoleName "Security Reader"
+```
+
+---
+
+## Export Permanent Assignments Only
+
+```powershell
+.\Get-PIMEligibleAssignments.ps1 `
+-PermanentOnly
+```
+
+---
+
+## Key Output Fields
+
+| Field | Description |
+|---|---|
+| PrincipalName | User display name |
+| PrincipalUPN | User principal name |
+| RoleName | Eligible role |
+| ActivationModel | Eligible vs Active |
+| IsPermanent | Permanent eligibility state |
+| DaysEligible | Assignment duration |
+| RiskLevel | Governance risk tier |
+| MultiRoleEligible | Multiple role aggregation indicator |
+
+---
+
+# Get-ConditionalAccessPolicies.ps1
+
+## Export All Policies
+
+```powershell
 .\Get-ConditionalAccessPolicies.ps1
-
-# Export only enabled policies
-.\Get-ConditionalAccessPolicies.ps1 -State Enabled
-
-# Export to specific path
-.\Get-ConditionalAccessPolicies.ps1 -OutputPath "C:\AuditEvidence"
 ```
-
-**Key output fields:** PolicyName, EnforcementStatus, PolicyStrength, RequiresMFA, PrivilegedScope, CoverageNote
 
 ---
 
-### Disable-EntraLeaverAccount.ps1
+## Export Enabled Policies Only
+
 ```powershell
-# ALWAYS run WhatIf first
-.\Disable-EntraLeaverAccount.ps1 -UserPrincipalName "user@domain.com" -WhatIf
-
-# Execute with ticket reference and protected account guardrail
-.\Disable-EntraLeaverAccount.ps1 `
-    -UserPrincipalName "user@domain.com" `
-    -TicketReference "CHG-2026-0342" `
-    -ProtectedAccounts @("breakglass@domain.com")
-
-# Multiple users
-.\Disable-EntraLeaverAccount.ps1 `
-    -UserPrincipalName @("user1@domain.com","user2@domain.com") `
-    -TicketReference "CHG-2026-0343"
+.\Get-ConditionalAccessPolicies.ps1 `
+-State Enabled
 ```
 
-**Key output fields:** Timestamp, UPN, Action, Status, Detail, TicketReference, ExecutionMode
+---
 
-⚠️ Always run with `-WhatIf` before executing. Review output carefully.
+## Export to Specific Path
+
+```powershell
+.\Get-ConditionalAccessPolicies.ps1 `
+-OutputPath "C:\AuditEvidence"
+```
 
 ---
 
-## Common IAM Failure Scenarios
+## Key Output Fields
 
-These scripts help identify and address common identity failures:
-
-- **Dormant accounts remain enabled** → detected by Get-StaleUsers
-- **Privilege accumulation across roles** → detected by Get-PIMEligibleAssignments
-- **Lack of MFA enforcement** → detected by Get-ConditionalAccessPolicies
-- **Unreviewed group membership growth** → detected by Get-GroupMembership
-- **Incomplete offboarding** → remediated by Disable-EntraLeaverAccount
-
-These patterns represent real-world attack paths exploited in identity-based breaches.
+| Field | Description |
+|---|---|
+| PolicyName | Conditional Access policy |
+| EnforcementStatus | Enabled, Disabled, Report-only |
+| PolicyStrength | Governance classification |
+| RequiresMFA | MFA enforcement status |
+| PrivilegedScope | Administrative scope detection |
+| CoverageNote | Enforcement notes |
 
 ---
 
-## Security Considerations
+# Disable-EntraLeaverAccount.ps1
 
-- Always use least-privilege permissions when running scripts — avoid Global Administrator where possible
-- Store output files in secure locations — reports may contain sensitive identity data
-- Protect execution logs — leaver workflow logs contain user activity and access changes
+## ALWAYS Run WhatIf First
+
+```powershell
+.\Disable-EntraLeaverAccount.ps1 `
+-UserPrincipalName "user@domain.com" `
+-WhatIf
+```
+
+---
+
+## Execute Controlled Offboarding Workflow
+
+```powershell
+.\Disable-EntraLeaverAccount.ps1 `
+-UserPrincipalName "user@domain.com" `
+-TicketReference "CHG-2026-0342" `
+-ProtectedAccounts @("breakglass@domain.com")
+```
+
+---
+
+## Multiple User Remediation
+
+```powershell
+.\Disable-EntraLeaverAccount.ps1 `
+-UserPrincipalName @(
+"user1@domain.com",
+"user2@domain.com"
+) `
+-TicketReference "CHG-2026-0343"
+```
+
+---
+
+## Key Output Fields
+
+| Field | Description |
+|---|---|
+| Timestamp | Execution timestamp |
+| UPN | Target account |
+| Action | Executed workflow step |
+| Status | Success or failure |
+| Detail | Additional execution details |
+| TicketReference | Change ticket linkage |
+| ExecutionMode | WhatIf or Execute |
+
+---
+
+# Operational Safety Controls
+
+The framework incorporates operational safeguards including:
+
+- WhatIf validation
+- protected account exclusions
+- structured execution logging
+- rollback-aware workflow design
+- non-destructive validation workflows
+- timestamped audit traceability
+
+These controls reduce risk associated with:
+- accidental administrative lockout
+- unintended privilege removal
+- destructive lifecycle execution errors
+
+Protected administrative identities and emergency access accounts should always be excluded from automated remediation actions unless explicitly authorized.
+
+---
+
+# Common IAM Failure Scenarios
+
+These workflows help identify and remediate common identity-centric governance failures.
+
+| Failure Scenario | Detection / Remediation |
+|---|---|
+| Dormant accounts remain enabled | Get-StaleUsers |
+| Privilege accumulation across roles | Get-PIMEligibleAssignments |
+| Lack of MFA enforcement | Get-ConditionalAccessPolicies |
+| Unreviewed group membership growth | Get-GroupMembership |
+| Incomplete offboarding | Disable-EntraLeaverAccount |
+
+These conditions represent common attack paths associated with identity compromise and governance breakdown.
+
+---
+
+# Security Considerations
+
+- Use least-privilege permissions whenever possible
+- Avoid Global Administrator unless operationally required
+- Store exports in secure locations
+- Protect lifecycle execution logs
+- Validate policy changes before production deployment
 - Use service principals with scoped permissions for automation scenarios
-- Validate Conditional Access and PIM changes in test environments before production use
+- Review outputs prior to remediation execution
+
+Governance exports may contain:
+- sensitive identity data
+- role assignments
+- access relationships
+- enforcement configurations
+
+Treat outputs as controlled governance artifacts.
 
 ---
 
-## Automation Extension
+# Automation Extension Opportunities
 
-These scripts can be integrated into automated workflows:
+The workflows support integration into broader governance operations.
 
-- Scheduled execution via Azure Automation or Task Scheduler
-- Integration with ticketing systems (ServiceNow, Jira) using the TicketReference field
-- Export ingestion into SIEM or GRC platforms for continuous monitoring
-- CI/CD-style validation for Conditional Access and PIM configurations
+Possible integrations include:
+- Azure Automation
+- scheduled execution
+- ServiceNow ticketing
+- Jira workflows
+- SIEM ingestion
+- GRC evidence pipelines
+- governance dashboards
 
-This enables continuous IAM governance rather than periodic manual reviews.
-
----
-
-## Operational Notes
-
-**Service account false positives**
-Get-StaleUsers flags accounts matching `svc|service|admin` UPN patterns as service accounts.
-Review `IsServiceAccount = True` results before taking remediation action.
-
-**PIM multi-role detection**
-Get-PIMEligibleAssignments sets `MultiRoleEligible = True` for users with more than one
-eligible role. These users represent elevated privilege aggregation risk and should be
-reviewed for business justification.
-
-**CA Report-only policies**
-Get-ConditionalAccessPolicies classifies Report-only policies as `PolicyStrength = Testing`.
-These are evaluating but not enforcing. Transition requires impact analysis before enabling.
-
-**Leaver script execution order**
-Disable account → validate state → revoke sessions → remove group memberships → remove
-role assignments. If any step fails, the error is logged and execution continues. Review
-the execution log before closing the ticket.
+This enables continuous IAM governance rather than periodic manual review cycles.
 
 ---
 
-## Troubleshooting
+# Operational Notes
 
-**Authentication failures**
-- Ensure required Graph scopes are granted
-- Reconnect using `Connect-MgGraph -Scopes "..."`
+## Service Account Detection
 
-**Missing sign-in data**
-- Verify AuditLog.Read.All permission is granted
-- Note: signInActivity requires Entra ID P1 or P2 licensing
+Get-StaleUsers flags accounts matching:
+- svc
+- service
+- admin
 
-**PIM data not returned**
-- Confirm RoleManagement.Read.Directory permission
-- Verify tenant has PIM enabled (requires P2 license)
+UPN naming patterns as potential service accounts.
 
-**Permission errors during execution**
-- Run `Get-MgContext` to confirm active scopes
-- Reconnect with correct permissions if scopes are missing
+Review:
+```text
+IsServiceAccount = True
+```
+
+prior to remediation.
 
 ---
 
-*Usage Guide v1.0 — March 2026*
+## Multi-Role Privilege Detection
+
+Get-PIMEligibleAssignments sets:
+
+```text
+MultiRoleEligible = True
+```
+
+when users maintain multiple eligible privileged roles.
+
+These identities represent elevated privilege aggregation risk and should be reviewed for:
+- business justification
+- excessive privilege persistence
+- role rationalization
+
+---
+
+## Report-Only Conditional Access Policies
+
+Get-ConditionalAccessPolicies classifies Report-only policies as:
+
+```text
+PolicyStrength = Testing
+```
+
+These policies evaluate sign-ins but do not enforce controls.
+
+Transition to enforcement should include:
+- What If analysis
+- sign-in log review
+- impact validation
+- break-glass testing
+
+---
+
+## Leaver Workflow Execution Order
+
+The remediation workflow executes in this order:
+
+```text
+Disable Account
+→ Validate State
+→ Revoke Sessions
+→ Remove Group Memberships
+→ Remove Role Assignments
+```
+
+If a step fails:
+- execution continues
+- the error is logged
+- remediation evidence remains preserved
+
+Always review execution logs before ticket closure.
+
+---
+
+# Troubleshooting
+
+## Authentication Failures
+
+Verify:
+- required Graph scopes are granted
+- the session is authenticated properly
+
+Reconnect using:
+
+```powershell
+Connect-MgGraph -Scopes "..."
+```
+
+---
+
+## Missing Sign-In Data
+
+Verify:
+- AuditLog.Read.All permission
+- Entra ID P1 or P2 licensing
+
+signInActivity requires premium licensing.
+
+---
+
+## PIM Data Not Returned
+
+Verify:
+- RoleManagement.Read.Directory permission
+- PIM is enabled within the tenant
+- Entra ID P2 licensing exists
+
+---
+
+## Permission Errors During Execution
+
+Validate active scopes:
+
+```powershell
+Get-MgContext
+```
+
+Reconnect with required permissions if scopes are missing.
+
+---
+
+# Governance Alignment
+
+This framework supports governance concepts aligned to:
+
+- NIST SP 800-53 Rev 5
+- NIST SP 800-171
+- CMMC Level 2
+- SOC 2 Type II
+- Zero Trust governance principles
+
+---
+
+# Usage Guide Metadata
+
+Usage Guide v1.0 — March 2026
+
+Environment:
+- Microsoft Entra ID
+- Microsoft Graph PowerShell SDK
+- rjmyers.cloud tenant
+
+---
+
+*This portfolio demonstrates governance concepts, operational workflows, and identity security practices within a controlled lab environment aligned to regulated IAM operations.*
