@@ -2,26 +2,36 @@
 
 ## Primary Bullets
 
-- Architected and implemented a Zero Trust Conditional Access framework in Microsoft Entra ID, establishing identity as the primary security control plane and enforcing policy evaluation on 100% of authentication events — eliminating implicit trust.
+- Built a Conditional Access governance framework in Microsoft Entra ID using MFA enforcement, geographic access restrictions, report-only deployment validation, and centralized authentication policy evaluation aligned to Zero Trust access control principles. 
 
-- Enforced tenant-wide MFA across all users and cloud applications, removing all password-only authentication paths and significantly reducing exposure to credential stuffing and password spray attacks aligned to NIST IA-2.
+- Enforced MFA across cloud application authentication workflows, reducing password-only authentication exposure and supporting centralized identity verification requirements aligned to NIST IA-2 concepts. 
 
-- Designed and deployed location-based access controls using named locations, restricting authentication from untrusted geographic regions and introducing layered geographic risk controls aligned to NIST AC-17.
+- Configured location-based Conditional Access policies using named locations to restrict authentication attempts originating from non-trusted geographic regions. 
 
-- Executed enterprise-grade Conditional Access deployment lifecycle using Report-only mode, What If simulation, and sign-in log analysis — validating policy impact prior to enforcement and preventing production lockouts.
+- Applied staged Conditional Access deployment practices using report-only mode, What If evaluation testing, and sign-in log analysis prior to enforcement rollout to reduce tenant lockout and policy disruption risk. 
 
-- Produced audit-ready evidence packages including policy configurations, evaluation outputs, and control mappings — enabling direct use in CMMC Level 2 and SOC 2 assessments without rework.
+- Produced audit-ready Conditional Access governance evidence including policy configurations, named location definitions, What If evaluation outputs, and sign-in log validation artifacts aligned to NIST 800-53 and CMMC Level 2 concepts. 
 
-- Mapped and validated controls against NIST 800-53 AC, IA, and SI control families and CMMC Level 2 requirements — translating technical enforcement into assessment-ready compliance artifacts.
+- Supported Zero Trust governance objectives by implementing centralized authentication policy enforcement where access decisions are evaluated dynamically during authentication workflows. 
 
-- Bridged Zero Trust architecture with regulatory frameworks, delivering defensible identity governance controls aligned to NIST 800-53 and CMMC Level 2.
+- Validated Conditional Access policy effectiveness through What If testing, report-only sign-in analysis, and simulated non-compliant authentication scenarios. 
 
-- Secured 100% of cloud authentication pathways under Conditional Access policy enforcement — establishing a complete identity enforcement perimeter with no authentication bypass paths.
+- Mapped Conditional Access governance workflows to NIST 800-53 AC, IA, and SI control concepts and CMMC Level 2 access control and authentication practices. 
+
+---
 
 ## Supporting Bullets
 
-- Identified and documented real-world control limitations including VPN bypass risk, non-interactive authentication gaps, and MFA fatigue — incorporating mitigation strategies and layered defenses that demonstrate architect-level awareness.
+- Designed break-glass governance procedures including Conditional Access exclusions, emergency access controls, monitoring requirements, and rollback planning to reduce tenant lockout risk. 
 
-- Designed break-glass access model with Conditional Access exclusions, secure credential controls, monitoring, and incident response procedures — preventing tenant lockout while maintaining audit accountability.
+- Documented operational limitations associated with geographic access controls including VPN bypass risk, travel-related access exceptions, and non-interactive authentication gaps. 
 
-- Established control validation methodology including What If simulation, negative testing, and continuous log-based monitoring — ensuring ongoing control effectiveness beyond initial deployment.
+- Established Conditional Access validation methodology using What If simulation, negative testing, sign-in log review, and quarterly governance review procedures. 
+
+- Maintained structured Conditional Access evidence artifacts including policy screenshots, deployment records, evaluation outputs, governance documentation, and audit traceability records. 
+
+- Documented staged deployment and operational tuning procedures supporting controlled rollout and continuous governance improvement practices. 
+
+---
+
+*These bullets are intended for IAM, Conditional Access, Zero Trust, identity governance, access management, governance, and compliance-focused resume tailoring.*
