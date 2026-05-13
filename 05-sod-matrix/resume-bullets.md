@@ -1,39 +1,39 @@
-# Resume Bullets — Segregation of Duties Pack
+# Resume Bullets — Segregation of Duties (SoD) Pack
 
-## Primary Bullets (Resume-Ready)
+## Primary Bullets
 
-- Designed and implemented enterprise Segregation of Duties (SoD) framework identifying 15 high-risk role conflicts across Finance, IT Administration, and Security domains with risk-tier classification and defined mitigations aligned to NIST AC-5.
+- Built a Segregation of Duties (SoD) governance framework defining 15 high-risk role conflict pairs across Finance, IT Administration, and Security operations to reduce fraud risk, privilege abuse, and audit integrity exposure within regulated environments. :contentReference[oaicite:0]{index=0}
 
-- Enforced preventative and detective SoD controls by integrating conflict validation into provisioning workflows and leveraging quarterly access reviews for continuous monitoring aligned to NIST CA-7.
+- Designed risk-tiered governance workflows classifying role conflicts as Critical, High, or Medium based on fraud potential, privilege escalation exposure, and operational integrity impact. :contentReference[oaicite:1]{index=1}
 
-- Modeled cross-domain access risks including fraud exposure (Finance), privilege abuse (IT Administration), and audit integrity violations (Security) — demonstrating governance beyond single-domain access control.
+- Implemented preventative SoD controls through provisioning governance workflows that evaluate requested role assignments against a formal conflict matrix before access is granted. :contentReference[oaicite:2]{index=2}
 
-- Established formal SoD exception governance process requiring executive approval, compensating control documentation, 90-day maximum expiration, and mandatory recurring review cycles.
+- Established quarterly detective governance reviews identifying accumulated role conflicts, validating compensating controls, and monitoring unresolved exceptions across regulated access populations. :contentReference[oaicite:3]{index=3}
 
-- Mapped SoD controls to NIST 800-53 AC-5, AC-6, AU-2, AU-9, and CA-7 and CMMC Level 2 — producing audit-ready evidence packages structured for direct compliance assessment use.
+- Produced audit-ready SoD governance evidence including conflict matrices, exception workflows, mitigation controls, provisioning governance records, and quarterly review procedures aligned to NIST 800-53 AC-5 and CMMC Level 2 concepts. :contentReference[oaicite:4]{index=4}
 
-- Translated access governance into audit-defensible control evidence aligned to fraud prevention, privilege abuse mitigation, and audit integrity requirements at a GRC practitioner level.
+- Designed formal SoD exception governance processes requiring documented business justification, compensating controls, approval authority, expiration dates, and periodic review for temporary role conflicts. :contentReference[oaicite:5]{index=5}
 
-- Identified and enforced separation between Security Administrator and Audit Log Administrator roles, directly satisfying NIST AU-9 audit log integrity requirements.
+- Supported least privilege and governance accountability objectives by separating incompatible operational functions including financial approval authority, privileged administration, audit oversight, and access certification responsibilities. :contentReference[oaicite:6]{index=6}
+
+- Mapped SoD governance workflows to NIST 800-53 AC-2, AC-3, AC-5, AC-6, AU-2, AU-9, and CA-7 control concepts while aligning governance evidence to CMMC Level 2 access control and audit accountability practices. :contentReference[oaicite:7]{index=7}
+
+---
 
 ## Supporting Bullets
 
-- Classified 7 Critical, 7 High, and 1 Medium risk conflicts across three functional domains — providing quantified risk prioritization enabling security leadership to focus remediation on highest-impact conflicts.
+- Configured preventative, detective, and corrective governance control models supporting continuous SoD enforcement and conflict remediation workflows. :contentReference[oaicite:8]{index=8}
 
-- Produced complete SoD evidence package including conflict matrix, risk classification, mitigation requirements, exception governance, and control mapping — enabling direct SSP inclusion without rework.
+- Defined mitigation strategies for high-risk role conflicts including dual approval workflows, PIM eligible-only privileged access, approval escalation, enhanced monitoring, and compensating controls. :contentReference[oaicite:9]{index=9}
 
-- Demonstrated architect-level SoD thinking by unifying Finance fraud risk, IT privilege escalation, and Security audit integrity into a single governance framework.
+- Implemented governance review procedures validating that role conflicts remain identified, risk-classified, mitigated, and traceable through quarterly access certification activities. :contentReference[oaicite:10]{index=10}
 
-## LinkedIn Experience Bullets
+- Maintained structured governance artifacts including SoD matrices, exception registers, review evidence, remediation records, and control mappings supporting audit and compliance activities. :contentReference[oaicite:11]{index=11}
 
-- Designed and implemented a Segregation of Duties (SoD) control framework identifying 15 high-risk role conflict pairs across Finance, IT Administration, and Security domains, with risk-tier classification and defined mitigation strategies
+- Documented operational limitations and governance dependencies including role granularity challenges, temporary staffing overlap, and IAM integration maturity considerations. :contentReference[oaicite:12]{index=12}
 
-- Implemented preventative and detective SoD controls by enforcing conflict checks at provisioning and leveraging access reviews to identify and remediate role conflicts over time
+- Applied governance-driven access control concepts supporting regulated-environment IAM, IGA, and compliance operations workflows. :contentReference[oaicite:13]{index=13}
 
-- Modeled cross-domain access risks including fraud exposure, privilege abuse, and audit integrity violations, demonstrating governance beyond single-domain access control
+---
 
-- Established formal SoD exception process requiring executive approval, compensating controls, defined expiration windows, and recurring review cycles
-
-- Mapped SoD controls to NIST 800-53 (AC-5, AC-6, AU-2, AU-9, CA-7) and CMMC Level 2, producing audit-ready evidence aligned for compliance assessments
-
-- Identified and enforced separation between Security Administrator and Audit Log Administrator roles, satisfying audit log integrity requirements (AU-9)
+*These bullets are intended for IAM governance, IGA, access governance, compliance operations, GRC, identity governance, and regulated-environment resume tailoring.*
