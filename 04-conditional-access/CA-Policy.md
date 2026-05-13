@@ -1,310 +1,395 @@
 # Conditional Access Policy
 
-**Document ID:** SMG-IAM-POL-004
-**Version:** 1.0
-**Date:** 2026-03-24
-**Owner:** Robert J. Myers
+**Document ID:** SMG-IAM-POL-004  
+**Version:** 1.0  
+**Date:** 2026-03-24  
+**Owner:** Robert J. Myers  
 
 ---
 
-## Executive Summary
+# Executive Summary
 
-This policy establishes identity as the primary security control plane, replacing network-based trust with continuous authentication and authorization enforcement.
+This policy establishes identity as the primary security control plane, replacing perimeter-based trust with continuous authentication and authorization enforcement. :contentReference[oaicite:0]{index=0}
 
-It defines the Conditional Access framework for Microsoft Entra ID, establishing a centralized identity enforcement plane where all access decisions are evaluated dynamically based on identity, location, device state, and risk signals. It eliminates implicit trust by requiring verification at every authentication event regardless of network location.
+The policy defines the Conditional Access framework for Microsoft Entra ID, establishing centralized identity enforcement where access decisions are evaluated dynamically using:
+- identity
+- location
+- authentication strength
+- device state
+- risk signals
 
-The implementation enforces MFA for all users across all cloud applications, blocks access from untrusted geographic regions, and establishes the operational framework for ongoing policy management, monitoring, and tuning.
+The implementation supports Zero Trust access governance by enforcing verification at every authentication event regardless of network location.
 
----
-
-## Control Objective
-
-Ensure that all access to cloud resources is evaluated against defined policy conditions at authentication time, with access granted only when identity verification requirements are satisfied and no high-risk signals are present.
-
-This control supports Zero Trust architecture by eliminating perimeter-based implicit trust and enforcing continuous verification of identity, location, and authentication strength.
-
----
-
-## 1. Purpose
-
-This policy establishes the Conditional Access framework for Microsoft Entra ID. It ensures:
-
-- All cloud resource access is controlled through policy evaluation at authentication time
-- MFA is enforced for all users on all cloud applications without exception
-- Geographic access controls restrict sign-ins from untrusted locations
-- Policies are deployed and managed using professional change management practices
-- Break-glass accounts are protected from policy lockout
-- Sign-in activity is monitored and policies are tuned on an ongoing basis
+Baseline controls include:
+- MFA enforcement for all users
+- geographic access restrictions
+- report-only staged deployment
+- centralized policy governance
+- operational monitoring and tuning
 
 ---
 
-## 2. Scope
+# Control Objective
+
+Ensure all cloud resource access is evaluated against defined Conditional Access policy requirements at authentication time, with access granted only when identity verification requirements are satisfied and no blocking conditions exist.
+
+This control supports:
+- Zero Trust access governance
+- centralized identity enforcement
+- remote access governance
+- authentication strength enforcement
+- continuous verification principles
+
+---
+
+# 1. Purpose
+
+This policy establishes the Conditional Access governance framework for Microsoft Entra ID.
+
+The policy ensures:
+- All cloud resource access is evaluated through Conditional Access policy logic
+- MFA is enforced across cloud applications
+- Geographic access restrictions are centrally managed
+- Policies follow staged deployment and change management practices
+- Break-glass emergency access remains available during failure scenarios
+- Sign-in activity and policy impact are continuously monitored
+
+---
+
+# 2. Scope
 
 | Scope Item | Detail |
 |---|---|
-| Users in scope | All workforce identities with Entra ID accounts |
-| Applications in scope | All cloud applications integrated with Entra ID |
-| Enforcement model | Policy evaluation at every authentication event |
-| Exclusions | Break-glass emergency accounts (managed under separate procedure) |
-| Non-interactive auth | Service principals and legacy protocols managed under separate policy |
+| Users in scope | Workforce identities authenticated through Microsoft Entra ID |
+| Applications in scope | Cloud applications federated through Microsoft Entra ID |
+| Enforcement model | Policy evaluation during authentication events |
+| Exclusions | Break-glass emergency accounts governed separately |
+| Non-interactive authentication | Service principals and legacy authentication governed under separate controls |
 
 ---
 
-## 3. Roles and Responsibilities
+# 3. Roles and Responsibilities
 
 | Role | Responsibility |
 |---|---|
-| IAM Engineer | Policy configuration, deployment, and change management |
-| Security Lead | Policy approval, risk acceptance, and enforcement decisions |
-| Compliance | Control validation, audit alignment, and evidence review |
-| Operations | Monitoring, incident response, and policy tuning |
+| IAM Engineer | Policy configuration, deployment, and lifecycle management |
+| Security Lead | Approval of enforcement changes and risk acceptance |
+| Compliance Team | Governance validation and evidence review |
+| Operations Team | Monitoring, incident response, and policy tuning |
 
 ---
 
-## 4. Policy Framework
+# 4. Policy Framework
 
 | Policy ID | Policy Name | Scope | Control | State |
 |---|---|---|---|---|
 | CA-POL-001 | Require MFA — All Users | All users, all cloud apps | Require MFA | Report-only → On |
 | CA-POL-002 | Block Non-US Sign-ins | All users, all cloud apps | Block access | Report-only → On |
 
-**Deployment model:** All policies deployed in Report-only mode initially. Impact assessed via sign-in logs before transitioning to enforcement mode. Changes follow change management process with Security Lead approval.
+---
+
+## Deployment Model
+
+All Conditional Access policies are deployed initially in report-only mode.
+
+Impact assessment is performed using:
+- sign-in logs
+- What If evaluation testing
+- policy impact review
+
+Policies transition to enforcement mode only after validation and Security Lead approval.
 
 ---
 
-## 5. Named Locations
+# 5. Named Locations
 
 | Location Name | Type | Definition | Usage |
 |---|---|---|---|
-| Trusted — United States | Countries (IP) | United States | Excluded from block policy — trusted geography |
+| Trusted — United States | Countries (IP) | United States | Trusted geographic region excluded from block policy |
 
 ---
 
-## 6. MFA Enforcement Policy — CA-POL-001
+# 6. MFA Enforcement Policy — CA-POL-001
 
-**Objective:** Require multi-factor authentication for all user sign-ins to all cloud applications.
+## Objective
 
-**Configuration:**
-- Users: All users (break-glass accounts excluded)
-- Target resources: All cloud apps
-- Grant control: Require multifactor authentication
-- Session controls: None (baseline policy)
-- State: Report-only → On
+Require MFA for all users accessing cloud applications through Microsoft Entra ID.
 
-**Risk addressed:**
-- Eliminates password-only authentication path
-- Reduces credential stuffing and password spray attack surface
-- Enforces identity verification regardless of network location or device
+## Configuration
 
----
-
-## 7. Location-Based Access Policy — CA-POL-002
-
-**Objective:** Block access attempts originating from outside the defined trusted geographic region.
-
-**Configuration:**
-- Users: All users
-- Target resources: All cloud apps
-- Conditions: Any location, excluding Trusted — United States
-- Grant control: Block access
-- State: Report-only → On
-
-**Risk addressed:**
-- Reduces exposure to access attempts from high-risk geographic regions
-- Provides coarse geographic control as a layered defense signal
-
-**Known limitations:**
-- Location controls rely on IP intelligence and may be bypassed via VPN or proxy
-- May introduce friction for legitimate users traveling internationally
-- Not relied upon as a primary control — layered with MFA enforcement
+| Setting | Configuration |
+|---|---|
+| Users | All users (excluding break-glass accounts) |
+| Applications | All cloud applications |
+| Grant Control | Require multifactor authentication |
+| Session Controls | None — baseline policy |
+| Deployment State | Report-only → On |
 
 ---
 
-## 8. Break-Glass Account Handling
+## Risks Addressed
 
-Break-glass emergency accounts must be explicitly excluded from Conditional Access policies:
-
-- Exclusion prevents tenant lockout during policy misconfiguration or MFA service outage
-- Break-glass accounts protected with long randomized credentials and no MFA dependency
-- Any sign-in from break-glass accounts triggers immediate alert and post-incident review
-- Break-glass usage restricted to tenant lockout recovery and emergency policy remediation
-- Documented and reviewed under separate break-glass account procedure
+- Password-only authentication
+- Credential stuffing attacks
+- Password spray attacks
+- Weak authentication pathways
+- Authentication attempts without identity verification
 
 ---
 
-## 9. Control Dependencies
+# 7. Location-Based Access Policy — CA-POL-002
 
-Conditional Access effectiveness depends on the following integrations:
+## Objective
+
+Restrict authentication attempts originating from outside approved geographic regions.
+
+## Configuration
+
+| Setting | Configuration |
+|---|---|
+| Users | All users |
+| Applications | All cloud applications |
+| Conditions | Any location excluding Trusted — United States |
+| Grant Control | Block access |
+| Deployment State | Report-only → On |
+
+---
+
+## Risks Addressed
+
+- Access attempts from untrusted regions
+- Geographic attack surface exposure
+- Unauthorized remote access attempts
+
+---
+
+## Known Limitations
+
+- Geographic controls rely on IP intelligence
+- VPN and proxy services may bypass geographic restrictions
+- International travel scenarios may require temporary exception handling
+- Geographic controls operate as layered security controls rather than primary authentication controls
+
+---
+
+# 8. Break-Glass Account Handling
+
+Break-glass emergency accounts are excluded from Conditional Access enforcement to reduce tenant lockout risk during:
+- MFA outages
+- Conditional Access misconfiguration
+- authentication service disruption
+
+Break-glass governance includes:
+- dedicated emergency accounts
+- long randomized credentials
+- restricted operational use
+- monitoring and alerting
+- post-use review procedures
+
+Break-glass accounts are governed separately under emergency access procedures.
+
+---
+
+# 9. Control Dependencies
 
 | Dependency | Purpose | Status |
 |---|---|---|
-| Entra ID P1/P2 licensing | Required for Conditional Access and Identity Protection | Active |
-| Identity Protection | Risk signals for sign-in and user risk-based policies | Planned |
-| Intune | Device compliance signals for device-based policies | Planned |
+| Microsoft Entra ID P1/P2 | Conditional Access and Identity Protection functionality | Active |
+| Identity Protection | Risk-based authentication and sign-in risk policies | Planned |
+| Intune | Device compliance evaluation | Planned |
 | PIM | Privileged access governance integration | Active |
-| CAE-capable apps | Continuous Access Evaluation for real-time session revocation | Planned |
+| Continuous Access Evaluation (CAE) | Real-time session revocation | Planned |
 
 ---
 
-## 10. Enforcement Controls
+# 10. Enforcement Controls
 
-- All policies deployed in Report-only before transitioning to enforcement mode
-- Impact analysis performed using sign-in logs and What If tool before enabling
-- Policy changes require Security Lead approval and impact documentation
-- Break-glass accounts excluded from all Conditional Access policies
-- Emergency rollback procedure documented for each policy
-
----
-
-## 11. Advanced Controls — Planned Extension
-
-| Control | Description | Dependency |
-|---|---|---|
-| Sign-in risk-based MFA | Step-up MFA for risky sign-ins via Identity Protection | Entra ID P2 |
-| Device compliance enforcement | Require compliant or hybrid joined device | Intune |
-| Continuous Access Evaluation | Real-time session revocation on risk signal | CAE-capable apps |
-| Admin-specific policies | Stricter controls for privileged accounts | PIM integration |
-| Phishing-resistant MFA | FIDO2 / Windows Hello for high-risk roles | Hardware keys |
+- Policies deployed initially in report-only mode
+- Sign-in logs reviewed before enforcement transition
+- What If evaluation performed before rollout
+- Security Lead approval required for enforcement changes
+- Break-glass exclusions maintained for all policies
+- Emergency rollback procedures documented
 
 ---
 
-## 12. Logging and Monitoring
+# 11. Planned Enhancements
 
-| Log Event | Implementation |
+| Planned Control | Description |
 |---|---|
-| Sign-in events | All sign-ins logged with policy evaluation results |
-| Policy impact | Report-only mode captures would-be enforcement results |
-| Failed sign-ins | Monitored for attack or misconfiguration patterns |
-| Block events | Logged when location policy would block access |
-| Retention | Minimum 90-day retention within Entra ID |
+| Risk-based MFA | MFA escalation for risky sign-ins |
+| Device compliance enforcement | Require compliant or hybrid-joined devices |
+| Continuous Access Evaluation | Real-time session revocation |
+| Privileged account Conditional Access | Enhanced restrictions for privileged accounts |
+| Phishing-resistant MFA | FIDO2 and Windows Hello deployment |
 
 ---
 
-## 13. Failure and Recovery Scenarios
+# 12. Logging and Monitoring
+
+| Event | Implementation |
+|---|---|
+| Sign-in events | All sign-ins logged with Conditional Access evaluation results |
+| Report-only impact | Policy impact captured prior to enforcement |
+| Failed sign-ins | Monitored for attack and misconfiguration indicators |
+| Block events | Geographic block events logged and reviewed |
+| Retention | Minimum 90-day log retention |
+
+---
+
+# 13. Failure and Recovery Scenarios
 
 | Scenario | Response |
 |---|---|
-| MFA service outage | Break-glass access invoked — documented procedure executed |
-| Misconfigured policy causing lockout | Rollback procedure executed — policy disabled via break-glass |
-| False positive blocks for legitimate users | Policy tuning via Report-only log analysis |
-| Identity compromise detected | Step-up MFA enforcement or session revocation via CAE |
-| Geo-block affecting traveling user | Temporary named location exclusion with documented approval |
+| MFA outage | Break-glass access procedure executed |
+| Tenant lockout from misconfiguration | Policy rollback using emergency access procedure |
+| False positive location blocks | Policy tuning through report-only analysis |
+| Identity compromise detection | MFA escalation or session revocation |
+| International travel exception | Temporary geographic exclusion with approval |
 
 ---
 
-## 14. Control Mapping
+# 14. Control Mapping
 
 | Control | Description | Implementation |
 |---|---|---|
-| AC-2 | Account Management | Policies scoped to all user accounts — no exceptions outside break-glass |
-| AC-3 | Access Enforcement | All access enforced through policy evaluation at authentication time |
-| AC-17 | Remote Access | Location-based policy controls remote access from untrusted regions |
-| IA-2 | Identification & Authentication | MFA required for all cloud app sign-ins |
-| IA-2(1) | Network Access to Privileged Accounts | MFA enforced across all access paths |
-| IA-2(11) | Remote Access — Separate Device | Location enforcement addresses remote access risk |
-| SI-4 | System Monitoring | Sign-in logs and Report-only mode provide continuous monitoring |
+| AC-2 | Account Management | Policies broadly scoped across workforce identities |
+| AC-3 | Access Enforcement | Access evaluated through Conditional Access policy engine |
+| AC-17 | Remote Access | Geographic access restrictions applied through named locations |
+| IA-2 | Identification & Authentication | MFA required for cloud application access |
+| IA-2(1) | Privileged Network Access | MFA enforced across authentication workflows |
+| IA-2(11) | Remote Access — Separate Device | Geographic restrictions applied to remote access conditions |
+| SI-4 | System Monitoring | Report-only mode supports policy monitoring and tuning |
 
 ---
 
-## 15. Risk Reduction Summary
+# 15. Risk Reduction Summary
 
 | Risk Condition | Mitigation |
 |---|---|
-| Password-only authentication | MFA policy eliminates single-factor access path |
-| Credential stuffing / spray attacks | MFA requirement invalidates stolen credentials alone |
-| Unauthorized access from untrusted regions | Location block policy restricts non-US sign-ins |
-| Tenant lockout from policy misconfiguration | Break-glass account exclusions prevent lockout |
-| Undetected policy impact before enforcement | Report-only deployment enables impact analysis |
+| Password-only authentication | MFA enforcement across cloud applications |
+| Credential stuffing and spray attacks | MFA invalidates password-only compromise |
+| Unauthorized geographic access | Geographic access restrictions through Conditional Access |
+| Tenant lockout risk | Break-glass account exclusions |
+| Policy deployment disruption | Report-only staged rollout and impact assessment |
 
 ---
 
-## 16. Design Considerations & Limitations
+# 16. Design Considerations & Limitations
 
-- Location-based controls rely on IP intelligence and may be bypassed via VPN or proxy services
-- Geo-blocking may introduce user friction for legitimate travel scenarios
-- Conditional Access does not protect non-interactive authentication — service principals and legacy protocols require separate controls
-- MFA fatigue and push fatigue risks must be mitigated through number matching or phishing-resistant authentication methods
-- Policies must be continuously tuned to balance security enforcement with user productivity
-- Report-only mode does not enforce — transition to On requires deliberate change management action
+- Geographic controls rely on IP intelligence and may be bypassed through VPN or proxy services
+- International travel may require temporary exception handling
+- Conditional Access does not fully protect legacy authentication or non-interactive authentication pathways
+- MFA fatigue risks require phishing-resistant authentication enhancements
+- Policies require continuous operational tuning to balance security and usability
+- Report-only mode validates impact but does not enforce controls
 
 ---
 
-## 17. Control Validation
+# 17. Control Validation
 
 Control effectiveness is validated through:
+- sign-in log review
+- What If policy evaluation testing
+- report-only impact analysis
+- blocked sign-in review
+- quarterly policy review
+- validation of break-glass exclusions
 
-- Sign-in log review confirming policy evaluation results are captured
-- What If tool evaluation confirming policy applies to target scenarios
-- Regular review of Report-only impact data before enforcement transition
-- Periodic policy review confirming break-glass exclusions are maintained
-- Quarterly review of blocked and failed sign-in patterns
-
----
-
-## 18. Assumptions
-
-- Microsoft Entra ID P1 license minimum — required for Conditional Access
-- All cloud application access is federated through Entra ID
-- Break-glass accounts are documented and credentials are securely stored
-- Named locations are reviewed and updated when organizational network changes occur
+Evidence artifacts include:
+- CA-STEP-01 through CA-STEP-06
 
 ---
 
-## 19. Evidence Requirements
+# 18. Assumptions
+
+- Microsoft Entra ID P1 licensing minimum is active
+- Cloud applications federate authentication through Microsoft Entra ID
+- Break-glass accounts are securely managed
+- Named locations are reviewed periodically for accuracy
+
+---
+
+# 19. Evidence Requirements
 
 Each policy deployment must produce:
+- policy configuration evidence
+- named location definitions
+- What If evaluation results
+- sign-in log evidence
+- deployment and change management records
 
-- Policy configuration showing assignments, conditions, and grant controls
-- Named location definitions
-- What If evaluation results confirming policy logic
-- Sign-in log evidence showing policy evaluation in Report-only mode
-- Change management documentation for enforcement transition
+Evidence must remain accessible for governance and compliance activities.
 
 ---
 
-## 20. Metrics and Governance
+# 20. Metrics and Governance
 
-The following metrics are tracked:
-
-- Sign-ins evaluated by CA policy (Report-only impact volume)
+Tracked metrics include:
+- sign-ins evaluated by Conditional Access
 - MFA success and failure rates
-- Location block events (would-be blocks in Report-only)
-- Break-glass account sign-in events (should be zero in normal operations)
-- Policy review completion rate (quarterly)
+- geographic block events
+- break-glass account activity
+- quarterly policy review completion
 
-Metrics reviewed quarterly by IAM and Security leadership.
-
----
-
-## 21. Prohibited Conditions
-
-The following are explicitly prohibited:
-
-- Disabling Conditional Access policies without documented Security Lead approval
-- Creating policies without break-glass account exclusions
-- Enabling enforcement mode without Report-only impact analysis
-- Granting permanent policy exclusions without documented business justification
-- Removing MFA requirements from any user population without security review
+Metrics are reviewed quarterly by IAM and Security leadership.
 
 ---
 
-## 22. Review and Maintenance
+# 21. Prohibited Conditions
 
-- Policy reviewed annually or upon major system or organizational changes
+The following are prohibited:
+- disabling Conditional Access without approval
+- deploying policies without break-glass exclusions
+- enabling enforcement without report-only validation
+- permanent policy exclusions without justification
+- removing MFA requirements without security review
+
+Violations require escalation and review.
+
+---
+
+# 22. Review and Maintenance
+
+- Policy reviewed annually or after major organizational or technical changes
 - Named locations reviewed when network topology changes
-- Version history maintained in GitHub repository
+- Version history maintained within GitHub repository
 - Next scheduled review: March 2027
 
 ---
 
-## 23. Assessment Narrative
+# 23. Governance Principle
 
-This implementation establishes a centralized identity enforcement plane where all access decisions are evaluated dynamically based on identity, location, and authentication strength. The design eliminates implicit trust and enforces verification at every authentication event.
+Access decisions are treated as dynamic identity governance events rather than perimeter-based trust decisions.
 
-Two baseline policies enforce MFA for all users and block access from untrusted geographic regions. Policies are deployed in Report-only mode following professional change management practice. Break-glass accounts are excluded to prevent tenant lockout. Control dependencies, failure scenarios, and design limitations are explicitly documented.
-
-Evidence demonstrates policy configuration, named location definition, What If evaluation results, and operational monitoring capability — establishing a defensible Conditional Access implementation aligned to NIST 800-53 and CMMC Level 2 requirements.
+Authentication requests must be continuously evaluated using identity, authentication strength, location, and policy conditions before access is granted.
 
 ---
 
-*SMG-IAM-POL-004 · Conditional Access Policy · v1.0 · 2026-03-24 · Internal*
+# 24. Assessment Narrative
+
+This implementation establishes a centralized identity enforcement plane where authentication requests are evaluated dynamically using identity, location, and authentication strength conditions.
+
+The design supports Zero Trust concepts by eliminating implicit trust and requiring verification during authentication events.
+
+Baseline policies enforce:
+- MFA across cloud applications
+- geographic access restrictions
+- centralized access governance workflows
+
+Policies are deployed initially in report-only mode following staged change management practices. What If evaluation testing validates policy behavior before enforcement rollout.
+
+Evidence demonstrates:
+- Conditional Access policy configuration
+- named location governance
+- report-only deployment
+- policy evaluation validation
+- centralized identity enforcement concepts
+
+This workflow supports identity governance, MFA enforcement, remote access governance, and regulated-environment access control objectives.
+
+---
+
+*This portfolio demonstrates governance concepts, operational workflows, and identity security practices within a controlled lab environment aligned to regulated IAM operations.*
+
+**SMG-IAM-POL-004 · Conditional Access Policy · v1.0 · Internal**
